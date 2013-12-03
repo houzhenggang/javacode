@@ -1,0 +1,80 @@
+package bsptest.stability;
+
+import java.io.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+
+/**
+* 调用接口的具体函数<br>
+* For example:<br>
+* IStability interface1 = new MI3();<br>
+* interface1.CallMotest();<br>
+* @see bsptest.stability.IStability
+* @version 1.0, 2013-08-23
+* @author 薛敬浩
+* @return
+*/ 
+
+
+public class StabilityTest extends UiAutomatorTestCase 
+{  
+	//确定Interface的具体实现方式的函数
+	public static IStability getInterface1(int flag) throws ParserConfigurationException, SAXException, IOException
+	{
+		IStability interface1 = null;
+		if(flag == 1)
+		{
+			interface1 = new MI3();
+		}
+		else if(flag == 2)
+		{
+			interface1 = new Android();
+		}
+		return interface1;
+		
+	}
+	
+	private int ReadXmlInt(String name) throws ParserConfigurationException, SAXException, IOException
+	{
+		DocumentBuilderFactory factory1 = DocumentBuilderFactory
+			     .newInstance();
+		DocumentBuilder builder1 = factory1.newDocumentBuilder();
+		Document document1 = builder1.parse(new File("/sdcard/string.xml"));
+		Element rootElement1 = document1.getDocumentElement();
+		NodeList list_loop = rootElement1.getElementsByTagName(name);
+		Element element_loop = (Element) list_loop.item(0);
+		String newname= element_loop.getChildNodes().item(0).getNodeValue();
+		int loop = Integer.parseInt(newname, 10);
+		
+		return loop;
+	}
+	
+	/**
+	 *ReadXmlInt(string) 可以读取XML中的int型数据。<br> 
+	 *ReadXmlString(string)可以读取XML中的string型字符串。<br> 
+	 * *UiObject waitApp = new UiObject(new UiSelector().textContains("暂停通话"))
+	 *的存在与否可以判断通话是否成功。<br> 
+	 *Log.v(MI3.ACTIVITY_TAG, "Modemtest CallMo fail ------------"+i)
+	 *会将运行fail的结果输入到logcat中<br>
+	 *@param ReadXmlInt("loop") 为循环的Loop次数<br> 
+	 *@param ReadXmlString("callNum") 为拨打电话的号码<br> 
+	 *@return true if the device has a phone else false
+	*/
+	public void test02Calltest() throws Exception 
+	{
+
+		IStability interface1 = getInterface1(ReadXmlInt("flag"));
+		interface1.setUp();
+		interface1.CallMotest();
+		interface1.tearDown();
+	
+	}
+	
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename compilation unit &apos;com.gerry.test.Eddd.java&apos; to &apos;LaunchSettings.java&apos;&#x0D;&#x0A;- Original project: &apos;Gerrytest&apos;&#x0D;&#x0A;- Original element: &apos;com.gerry.test.Eddd.java&apos;&#x0D;&#x0A;- Renamed element: &apos;com.gerry.test.LaunchSettings.java&apos;" description="Rename compilation unit &apos;Eddd.java&apos;" flags="2" id="org.eclipse.jdt.ui.rename.compilationunit" input="/src&lt;com.gerry.test{Eddd.java" name="LaunchSettings.java" references="false" stamp="1353927185517" version="1.0"/>
+</session>

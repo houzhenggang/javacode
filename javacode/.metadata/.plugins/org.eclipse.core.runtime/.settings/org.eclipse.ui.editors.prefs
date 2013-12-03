@@ -1,0 +1,11 @@
+eclipse.preferences.version=1
+lineNumberColor=255,0,0
+lineNumberRuler=true
+overviewRuler_migration=migrated_3.1
+showCarriageReturn=false
+showEnclosedIdeographicSpaces=false
+showLeadingIdeographicSpaces=false
+showLineFeed=false
+showTrailingIdeographicSpaces=false
+showWhitespaceCharacters=true
+spellingEngine=org.eclipse.jdt.internal.ui.text.spelling.DefaultSpellingEngine

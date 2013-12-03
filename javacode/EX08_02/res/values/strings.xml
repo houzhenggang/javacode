@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="hello">下个月就中，哈哈！</string>
+  <string name="app_name">百度汽车新闻</string>
+  <string name="url"></string>
+  <string name="load">正在載入</string>
+</resources>

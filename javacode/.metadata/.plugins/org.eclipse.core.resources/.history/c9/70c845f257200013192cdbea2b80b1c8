@@ -1,0 +1,84 @@
+package Bsptest;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import android.os.RemoteException;
+
+import com.android.uiautomator.core.UiCollection;
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class Demo extends UiAutomatorTestCase
+{
+	/*//url 为xml的路径 name 为读取String参数的具体名称
+	private String ReadXmlString(String url, String name) throws ParserConfigurationException, SAXException, IOException
+	{
+		DocumentBuilderFactory factory1 = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder1 = factory1.newDocumentBuilder();
+		Document document1 = builder1.parse(new File(url));
+		Element rootElement1 = document1.getDocumentElement(); 
+		NodeList list_loop = rootElement1.getElementsByTagName(name);
+		Element element_loop = (Element) list_loop.item(0);
+		String newname= element_loop.getChildNodes().item(0).getNodeValue();
+		
+		return newname;
+	}
+	
+	// 在XML中读取int 类型的数值
+		private int ReadXmlInt(String url ,String name) throws ParserConfigurationException, SAXException, IOException
+		{
+			DocumentBuilderFactory factory1 = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder1 = factory1.newDocumentBuilder();
+			Document document1 = builder1.parse(new File(url));
+			Element rootElement1 = document1.getDocumentElement();
+			NodeList list_loop = rootElement1.getElementsByTagName(name);
+			Element element_loop = (Element) list_loop.item(0);
+			String newname= element_loop.getChildNodes().item(0).getNodeValue();
+			int loop = Integer.parseInt(newname, 10);
+			return loop;
+		}*/
+	
+	public void testDemo() throws RemoteException, UiObjectNotFoundException, ParserConfigurationException, SAXException, IOException
+	{
+		/*//点击Home键
+		getUiDevice().pressHome();
+		getUiDevice().sleep();
+		//在CDM中输出字符串
+		System.out.println("Click Home Button ");
+		
+		UiCollection videos = new UiCollection(new UiSelector()
+		   .className("android.widget.LinearLayout"));
+		int count = videos.getChildCount(new UiSelector()
+		   .className("android.widget.LinearLayout"));
+		System.out.println(count);
+		 getUiDevice().setOrientationRight();
+		 getUiDevice().unfreezeRotation();
+		UiScrollable appViews = new UiScrollable(new UiSelector()
+		.scrollable(true));
+		UiObject settingsApp = appViews.getChildByInstance(new UiSelector().className(android.widget.Spinner.class.getName()).index(26),0);
+		settingsApp.clickAndWaitForNewWindow();
+		System.out.println(ReadXmlString("/sdcard/string.xml","loop"));
+		sleep((long) 1000.0); */
+		
+		UiDevice.getInstance().click(980,420);
+		sleep((long) 1100);
+		UiDevice.getInstance().click(1806,83);
+		
+
+	}
+
+}

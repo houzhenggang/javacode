@@ -1,0 +1,18 @@
+package xjh;
+
+import java.io.IOException;
+
+public class haha1
+{
+	@SuppressWarnings("unused")
+	public static void main(String[] args) throws IOException
+	{
+		String []cmdarray = new String[3];
+		cmdarray[0] = "cmd.exe";
+		cmdarray[1] = "/k";
+		cmdarray[2] = "adb shell".replace("&", "^&");
+		Process p2 = Runtime.getRuntime().exec(cmdarray);
+		Process p3 = Runtime.getRuntime().exec("adb shell lgocat ");
+	}
+
+}

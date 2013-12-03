@@ -1,0 +1,61 @@
+package mars.activity_calculator;
+
+import android.os.Bundle;
+
+import android.app.Activity;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+	private EditText factorOne ;
+	private EditText factorTwo ;
+	private TextView symbol ;
+	private Button calculate ;
+	
+	
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        factorOne = (EditText)findViewById(R.id.factorOne);
+        factorTwo = (EditText)findViewById(R.id.factorTwo);
+        symbol = (TextView)findViewById(R.id.symbol);
+        calculate = (Button)findViewById(R.id.calculate);
+        /*symbol.setText("≥À“‘");
+        calculate.setText("º∆À„");*/
+        symbol.setText(R.string.symbol);
+        calculate.setText(R.string.calculate);
+        
+        
+        
+        
+        
+    }
+    class CalculateListener implements OnClickListener{
+    	public void onClick(View v){
+    		String factorOneStr =factorOne.getText().toString();
+    		String factorTwoStr =factorTwo.getText().toString();
+    		Intent intent = new Intent();
+    		intent.putExtra("one",factorOneStr);
+    		intent.putExtra("two",factorTwoStr);
+    		intent.setClass(MainActivity.this, ResultActivity.class);
+    		startActivity(intent);
+    		s
+    		
+    		
+    	}
+    	
+    	
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+}

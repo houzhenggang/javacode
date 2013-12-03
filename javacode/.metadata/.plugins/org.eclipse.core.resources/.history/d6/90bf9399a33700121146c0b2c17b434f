@@ -1,0 +1,5 @@
+package com.android.uiautomator;
+
+public class LaunchSettings {
+
+}

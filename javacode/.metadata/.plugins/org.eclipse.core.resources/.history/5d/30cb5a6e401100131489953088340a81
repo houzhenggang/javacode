@@ -1,0 +1,24 @@
+package bsptest.stability;
+
+import java.io.IOException;
+import org.xml.sax.SAXException;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+
+/**
+*Interface 接口的具体函数名�?
+* <p>Interface的各个函数的实现方法可见MI3.java<br>
+* @version 1.0, 2013-08-23
+* @author 薛敬�?
+* @param b true 
+* @return
+*/ 
+
+interface IStability
+{
+	void CallMotest() throws UiObjectNotFoundException, IOException, Exception, SAXException;
+	void SmsMoTest() throws UiObjectNotFoundException, IOException, Exception, SAXException;
+	void AirPlane() throws UiObjectNotFoundException, IOException, Exception, SAXException;
+	void DataChange() throws UiObjectNotFoundException, IOException, Exception, SAXException;
+	void Alarm() throws UiObjectNotFoundException, IOException, Exception, SAXException;
+	void CrashBug();
+}

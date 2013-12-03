@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<argument>
+	<!-- callnum为电话号码 -->
+	<callnum>tel:10086</callnum>
+        <!-- airplane选择打开或关闭 -->
+	<airplane>open</airplane>
+        <!-- wifi选择打开或关闭 -->
+        <wifi>open</wifi>
+        <!-- 选择wifi -->
+        <wifiname>NETGEAR80</wifiname>
+        <!-- wifi用户名 -->
+        <wifiadmin>xiaomi</wifiadmin>  
+        <!-- wifi密码 -->
+        <wifipassword>xiaomibsp</wifipassword>
+        <!-- bluetooth选择打开或关闭 -->
+        <bluetooth>open</bluetooth>
+        <!-- 选择配对bluetooth -->
+        <btname>mi3</btname>
+        <!-- 选择network类型，分别是2Gonly,3Gonly,3Gprefer -->
+        <network>2Gonly</network>
+</argument>

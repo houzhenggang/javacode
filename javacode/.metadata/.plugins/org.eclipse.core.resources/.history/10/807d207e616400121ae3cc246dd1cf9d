@@ -1,0 +1,13 @@
+import mars.activity02.R;
+
+
+public class sfdf
+{
+	public static void main(String args[]){
+	for(int i = 000; i < 255; i++){
+		System.out.println("R.drawable.gamma" + i);
+		
+	}
+	}
+
+}

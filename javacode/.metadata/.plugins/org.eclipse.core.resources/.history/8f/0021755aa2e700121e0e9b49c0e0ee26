@@ -1,0 +1,148 @@
+package Bsptest;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import android.os.RemoteException; 
+
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class Airplane extends UiAutomatorTestCase {  
+	
+	@SuppressWarnings("deprecation")
+	public void AirPlane() throws UiObjectNotFoundException, IOException, RemoteException{
+		Process mkdir = Runtime.getRuntime().exec("mkdir /sdcard/Airplane");
+		File newFile1=new File("/sdcard/Airplane/open_fail_list.text");
+		newFile1.createNewFile();
+		FileOutputStream fo=new FileOutputStream(newFile1);
+		File newFile2=new File("/sdcard/Airplane/close_fail_list.text");
+		newFile1.createNewFile();
+		FileOutputStream fo1=new FileOutputStream(newFile2);
+		getUiDevice().pressHome();
+		Process pc1 = Runtime.getRuntime().exec("am start -n com.android.settings/.Settings");
+		sleep((long) 5000.0);
+		UiScrollable appViews = new UiScrollable(new UiSelector()
+         .scrollable(true));
+		UiObject moreApp = appViews.getChildByText(new UiSelector()
+         .className(android.widget.TextView.class.getName()), 
+         "更多...");
+		moreApp.click();
+		sleep((long) 5000.0);
+      for(int i = 1 ; i < 1000 ; i++){
+    	  Process p = Runtime.getRuntime().exec("logcat -c");
+    	  sleep((long) 1000.0);
+    	  UiObject airPlaneApp = new UiObject(new UiSelector()
+	         .text("飞行模式"));
+  		airPlaneApp.click();
+  		sleep((long) 10000.0);
+  		if(i%2 != 0)
+  		{
+    	  	String logcat;
+			File logcatFile=new File("/sdcard/Airplane/open"+(i+1)/2+".txt");
+			logcatFile.createNewFile();
+			FileOutputStream outputLogcat=new FileOutputStream(logcatFile);
+			Process getLogcat = Runtime.getRuntime().exec("logcat -b radio -t 1000");
+			DataInputStream inputLogcat = new DataInputStream(getLogcat.getInputStream());
+			while ((logcat = inputLogcat.readLine()) != null){
+				outputLogcat.write(logcat.getBytes());				
+			}
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(logcatFile));  
+            String lineTXT ;
+            lineTXT = bufferedReader.readLine();
+            String log = lineTXT.toString().trim();
+            int result=log.indexOf("RADIO_POWER off");
+            if(result != -1)
+            {
+		    	System.out.println("Open Airplane successfully------->"+(i+1)/2);				    	
+		    }
+		    else
+		    {
+		    	System.out.println("Open Airplane fail------->"+(i+1)/2);
+		    	String failnote = "Open Airplane fail_"+(i+1)/2;
+  				SimpleDateFormat date1 = new SimpleDateFormat("yyyyMMddHH:mm:ss");
+  				fo.write((date1.format(new Date())+"  \n"+failnote+"  \n").getBytes());
+  				GetLog getlog =new GetLog();
+				getlog.getModemLog();
+				sleep((long) 2000.0);
+				getlog.getBugreportLog();
+				sleep((long) 20000.0);
+		    }
+  		}
+      else
+      {
+    	  String logcat;
+			File logcatFile=new File("/sdcard/Airplane/close"+i/2+".txt");
+			logcatFile.createNewFile();
+			FileOutputStream outputLogcat=new FileOutputStream(logcatFile);
+			Process getLogcat = Runtime.getRuntime().exec("logcat -b radio -t 1000");
+			DataInputStream inputLogcat = new DataInputStream(getLogcat.getInputStream());
+			while ((logcat = inputLogcat.readLine()) != null){
+				outputLogcat.write(logcat.getBytes());				
+			}
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(logcatFile));  
+          String lineTXT ;
+          lineTXT = bufferedReader.readLine();
+          String log = lineTXT.toString().trim();
+          int result=log.indexOf("RADIO_POWER on");
+          if(result != -1)
+          {
+		    	sleep((long) 10000.0);
+		    	int result1 = -1;
+		    	while(result1 == -1){
+		    	Process getLogcat1 = Runtime.getRuntime().exec("dumpsys telephony.registry");
+		    	DataInputStream inputLogcat1 = new DataInputStream(getLogcat1.getInputStream());
+				while ((logcat = inputLogcat1.readLine()) != null){
+					outputLogcat.write(logcat.getBytes());				
+				}
+				BufferedReader bufferedReader1 = new BufferedReader(new FileReader(logcatFile));  
+	          String lineTXT1 ;
+	          lineTXT1 = bufferedReader1.readLine();
+	          String log1 = lineTXT1.toString().trim();
+	          result1=log1.indexOf("China");
+	          sleep((long) 5000.0);
+	          continue;
+		    }
+	    	UiObject airPlane1App = new UiObject(new UiSelector()
+	         .text("取消"));
+	    	airPlane1App.waitForExists((long) 20000.0);
+	    	if(airPlane1App.exists())
+	    	{
+	    		airPlane1App.click();	    		
+	    	}
+	    	sleep((long) 5000.0);
+		    	
+		    	
+		  }
+		  else
+		  {
+	    	System.out.println("Close Airplane fail------->"+i/2);
+	    	String failnote = "Close Airplane fail_"+i/2;
+	    	sleep((long) 10000.0);
+	    	GetLog getlog =new GetLog();
+			getlog.getModemLog();
+			sleep((long) 2000.0);
+			getlog.getBugreportLog();
+			sleep((long) 20000.0);
+			SimpleDateFormat date1 = new SimpleDateFormat("yyyyMMddHH:mm:ss");
+			fo.write((date1.format(new Date())+"  \n"+failnote+"  \n").getBytes());
+			UiObject airPlane1App = new UiObject(new UiSelector()
+	         .text("取消"));
+	    	airPlane1App.waitForExists((long) 20000.0);
+	    	if(airPlane1App.exists())
+	    	{
+	    		airPlane1App.click();	    		
+	    	}
+	    	sleep((long) 5000.0);
+		  }
+    	  
+      }
+      }
+	}
+	
+}

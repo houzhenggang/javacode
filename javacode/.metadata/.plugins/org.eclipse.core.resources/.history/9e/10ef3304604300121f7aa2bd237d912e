@@ -1,0 +1,17 @@
+package com.bsp.xue;
+import junit.framework.*;
+import com.bsp.xue.test;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+public class test1 extends TestCase {
+	public void test1() {
+	    Test test = new test();
+	    junit.textui.TestRunner.run(test.class);
+
+    }
+
+
+}

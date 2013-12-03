@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;Util.java&apos; to &apos;Interface/src/bsptest.powertest&apos;&#x0D;&#x0A;- Original project: &apos;PowerTest&apos;&#x0D;&#x0A;- Destination element: &apos;Interface/src/bsptest.powertest&apos;&#x0D;&#x0A;- Original element: &apos;bsptest.Util.java&apos;" description="Copy compilation unit" destination="=Interface/src&lt;bsptest.powertest" element1="/src&lt;bsptest{Util.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1377678591056" units="1" version="1.0"/>
+</session>

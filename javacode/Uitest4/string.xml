@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wuxialist>
+	<txtbook>
+	    <loopnum>5000</loopnum>
+		<name>android.intent.action.CALL</name>
+		<callnum>tel:10086</callnum>
+			</txtbook>
+
+</wuxialist>

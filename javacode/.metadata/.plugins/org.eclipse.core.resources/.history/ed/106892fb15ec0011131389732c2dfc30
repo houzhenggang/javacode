@@ -1,0 +1,1641 @@
+package com.mot.udm.caseexe;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.mot.udm.R;
+import com.mot.udm.UdmActivity;
+import com.mot.udm.UdmAlertDialog;
+import com.mot.udm.config.AirConfig;
+import com.mot.udm.config.BlueToothConfig;
+import com.mot.udm.config.ConfigProp;
+import com.mot.udm.config.FtpConfig;
+import com.mot.udm.config.HttpConfig;
+import com.mot.udm.config.LoadActivity;
+import com.mot.udm.config.PingConfig;
+import com.mot.udm.config.SaveAsActivity;
+import com.mot.udm.config.Settings;
+import com.mot.udm.config.SmsConfig;
+import com.mot.udm.config.VodConfig;
+import com.mot.udm.config.VoiceCallConfig;
+import com.mot.udm.config.VoiceDataCallConfig;
+import com.mot.udm.config.WifiConfig;
+import com.mot.udm.util.PropertyManager;
+import com.mot.udm.webservices.WebServicesMonitorActivity;
+
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Color;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.GestureDetector.OnGestureListener;
+import android.view.MotionEvent;
+import android.view.View.OnTouchListener;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import android.widget.TextView;
+
+public class MainActivity extends Activity implements OnTouchListener,OnGestureListener,CompoundButton.OnCheckedChangeListener {
+	private static Context cx; 
+	//all button from UI
+	private static Button voiceCallConfig;
+	private static Button voiceDataCallConfig;
+	private static Button pingConfig;
+	private static Button ftpConfig;
+	private static Button httpConfig;
+	private static Button vodConfig;
+	private static Button wifiConfig;
+	private static Button airConfig;
+	private static Button blueToothConfig;
+	private static Button smsConfig;
+	
+	private static Button start;
+	private static Button pause;
+	private static Button stop;
+	private static Button settings;
+
+	//all checkbox from UI
+	private static RadioButton voiceCallRadio;
+	private static RadioButton voiceDataRadio;
+	private static RadioButton ftpRadio;
+	private static RadioButton httpRadio;
+	private static RadioButton vodRadio;
+	private static RadioButton pingRadio;
+	private static RadioButton wifiRadio;
+	private static RadioButton airRadio;
+	private static RadioButton blueToothRadio;
+	private static RadioButton smsRadio;
+
+	private static TextView voiceCallPercent;
+	private static TextView voiceDataCallPercent;
+	private static TextView ftpPercent;
+	private static TextView httpPercent;
+	private static TextView vodPercent;
+	private static TextView pingPercent;
+	private static TextView wifiPercent;
+	private static TextView airPercent;
+	private static TextView blueToothPercent;
+	private static TextView smsPercent;
+
+	private static ProgressBar voiceCallProgress;
+	private static ProgressBar voiceDataCallProgress;
+	private static ProgressBar ftpProgress;
+	private static ProgressBar httpProgress;
+	private static ProgressBar vodProgress;
+	private static ProgressBar pingProgress;
+	private static ProgressBar wifiProgress;
+	private static ProgressBar airProgress;
+	private static ProgressBar blueToothProgress;
+	private static ProgressBar smsProgress;
+
+	private static ScrollViewDisable topScroll;
+	private static RelativeLayout topLinear;
+	private static TextView logView;
+	private static TextView logViewTitle;
+	private static GestureDetector mDetector;
+
+	private static final int maxLogLines = 50;
+	private static final int minLogLines = 50;
+	private static int logViewHeight = 50;
+	private static int realLogLines = 50;
+	private static List<String> mLogList = new ArrayList<String>();
+	private static final int maxLogNumber = 10000; //define mLogList max size
+	private static int logLines = 0;
+	private static int currentPos;
+	private static int moveLines = 3;
+	private float scrollUp = 0;
+
+	private static final int MSG_CASE_END = 0;
+	private static final int MSG_PROGRESS_MAX_VALUE = 1;
+	private static final int MSG_SET_CASE_STATE = 2;
+	private static final int MSG_RESET_UI = 3;
+	private static final int MSG_APPEND_LOG = 4;
+	private static final int MSG_CLEAR_LOG = 5;
+	private static final int MSG_ALERT = 6;
+	private static final int MSG_SHOW_TITLE = 7;
+	private static final int MSG_START_CASE = 8;
+	public static final int MSG_SHOW_RESULTS = 9;
+	
+	private static UdmAlertDialog alertDialog;
+	private static final int delayTime = 2000;
+	
+	private static boolean bFront = true;
+	public static final int requstLoad = 0;
+	
+	private static TextView configName;
+	
+	public static Handler MY_HANDLER = new Handler(Looper.getMainLooper()) {
+		
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case MSG_CASE_END:
+				//the msg sent after the case is completed
+				showProcessControl(msg.arg1, false);
+				disableRadio(false);
+				break;
+			case MSG_PROGRESS_MAX_VALUE:
+				//called when case init
+				setProgressMaxValue(msg.arg1, msg.arg2);
+				break;
+			case MSG_SET_CASE_STATE:
+				//called during case running
+				setExeState(msg.arg1, msg.arg2, (String)msg.obj);
+				break;
+			case MSG_APPEND_LOG:
+				appendExeLog((String)msg.obj);
+				break;
+			case MSG_CLEAR_LOG:
+				//start a new case
+				resetLog();
+			case MSG_ALERT:
+				reportAlert((String)msg.obj, msg.arg1);
+				break;
+			case MSG_RESET_UI:
+				setCheckedCaseRadio(msg.arg1);
+				disableRadio((msg.arg2 & CaseRunner.caseRunningMask) == 1? true : false);
+				showProcessControl(msg.arg1, ((msg.arg2  & CaseRunner.caseRunningMask ) == 1? true : false));
+				restorePlayAfterPause((msg.arg2 & CaseRunner.casePauseMask) == 2? true : false);
+				break;
+			case MSG_SHOW_TITLE:
+				setConfigName((String)msg.obj);
+				break;
+			case MSG_START_CASE:
+				launcCaseByCmd(msg.arg1);
+				break;
+			case MSG_SHOW_RESULTS: // This is used to show intermediate test suite results
+				Bundle bundle = msg.getData();
+				showResult(bundle.getString("msg"));
+				break;
+			}
+		}
+	};
+
+	public static void showResult(String msg){
+		if ((null != msg) && (null != MainActivity.cx)){
+			AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.cx).create();
+			alertDialog.setTitle("UDM test results");
+			alertDialog.setMessage(msg);
+			alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+			});
+			alertDialog.show();
+		}
+	}
+	
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		setTopViewAndListener();
+		initVoiceCallConfig();
+		initPingCallConfig();
+		initVoiceDataCallConfig();
+		initFtpConfig();
+		initHttpConfig();
+		initVodConfig();
+		initWifiConfig();
+		initAirConfig();
+		initBlueToothConfig();
+		initSmsConfig();
+		
+		initStart();
+		initPause();
+		initStop();
+		initSettings();
+		
+		initRadio();
+		initPercentControl();
+		initProgressBar();
+		initLog();
+		alertDialog = new UdmAlertDialog(this);
+		resumeUI();
+		ConfigProp.checkSdcard(this);
+		initCaseSelectLabel();
+		initDmcFolder();
+	}
+	
+	public static boolean clearLogMsg(){
+		return sendMessage(MSG_CLEAR_LOG, 0, 0);
+	}
+
+	/**
+	 * it should be called after the case is stopped
+	 * @param type
+	 * @param bShow
+	 */
+	public static boolean caseEndMsg(int type){
+		return sendMessage(MSG_CASE_END, type, 1);
+    }
+
+	/**
+	 * it should be called when the case gets the loop number
+	 * @param type
+	 * @param value
+	 */
+	public static void setProgressMaxValueMsg(int type, int value){
+		sendMessage(MSG_PROGRESS_MAX_VALUE, type, value);
+	}
+	
+	public static void launchCaseMsg(int type){
+		sendMessage(MSG_START_CASE, type, 0);
+	}
+
+	/**
+	 * it is called to show the case execution state
+	 * @param type
+	 * @param progressValue
+	 * @param state
+	 */
+	public static void setExeStateMsg(int type, int progressValue,
+			String state) {
+		if (MY_HANDLER != null) {
+			Message msg = MY_HANDLER.obtainMessage(MSG_SET_CASE_STATE, type,
+					progressValue, state);
+			MY_HANDLER.sendMessage(msg);
+		}
+	}
+	
+	public static void showCaseConfig(String name){
+		if (MY_HANDLER != null) {
+			Message msg = MY_HANDLER.obtainMessage(MSG_SHOW_TITLE, name);
+			MY_HANDLER.sendMessage(msg);
+		}
+	}
+
+	/**
+	 * it should be called when case is launched or stopped(current is called in startlog function)
+	 * @param bPlay
+	 */
+	public static boolean resumeUIMsg(int type, int bPlay){
+		return sendMessage(MSG_RESET_UI, type, bPlay);
+	}
+
+	public static void addExeLogMsg(String log){
+		if (MY_HANDLER != null) {
+			Message msg = MY_HANDLER.obtainMessage(MSG_APPEND_LOG, log);
+			MY_HANDLER.sendMessage(msg);
+		}
+	}
+
+	public static void reportAlertMsg(String message, int count){
+		if (MY_HANDLER != null) {
+			Message msg = MY_HANDLER.obtainMessage(MSG_ALERT, count, 0, message);
+			MY_HANDLER.sendMessage(msg);
+		}
+	}
+
+	public static void showSaveSettingsAlert(){
+		if (MY_HANDLER != null) {
+			MY_HANDLER.postDelayed(new Runnable(){
+
+				public void run() {
+					dissmissAlert();
+				}
+
+			}, delayTime);
+		}
+
+	}
+
+	/**
+	 * it is called when there is no execution cases and start new circle.
+	 */
+	private static void resetLog(){
+		mLogList.clear();
+		if(logView != null){
+			logView.setText("");
+			logLines = 0;
+			currentPos = 0;
+		}
+	}
+	
+	/**
+	 * control execution details show
+	 */
+	private void setTopViewAndListener(){
+		cx = this;
+		topScroll = (ScrollViewDisable)findViewById(R.id.mainScroll);
+		topLinear = (RelativeLayout)findViewById(R.id.topLinear);
+		topLinear.setOnTouchListener(this);
+		mDetector = new GestureDetector(this);
+	}
+
+	private void initVoiceCallConfig(){
+		voiceCallConfig = (Button)findViewById(R.id.voiceCallConfig);
+		voiceCallConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, VoiceCallConfig.class);
+            	startActivity(i);
+            }
+        });
+		voiceCallConfig.setBackgroundResource(R.drawable.config);
+		voiceCallConfig.setOnTouchListener(this);
+		voiceCallConfig.setTextColor(Color.WHITE);
+
+	}
+	
+	private void initPingCallConfig(){
+		pingConfig = (Button)findViewById(R.id.pingConfig);
+		pingConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, PingConfig.class);
+            	startActivity(i);
+            }
+        });
+		pingConfig.setBackgroundResource(R.drawable.config);
+		pingConfig.setOnTouchListener(this);
+		pingConfig.setTextColor(Color.WHITE);
+
+	}	
+	
+	private void initVoiceDataCallConfig(){
+		voiceDataCallConfig = (Button)findViewById(R.id.voiceDataCallConfig);
+		voiceDataCallConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, VoiceDataCallConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		voiceDataCallConfig.setBackgroundResource(R.drawable.config);
+		voiceDataCallConfig.setOnTouchListener(this);
+		voiceDataCallConfig.setTextColor(Color.WHITE);
+
+	}
+
+	private void initFtpConfig(){
+		ftpConfig = (Button)findViewById(R.id.ftpConfig);
+		ftpConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, FtpConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+		ftpConfig.setBackgroundResource(R.drawable.config);
+		ftpConfig.setOnTouchListener(this);
+		ftpConfig.setTextColor(Color.WHITE);
+	}
+
+	private void initHttpConfig(){
+		httpConfig = (Button)findViewById(R.id.httpConfig);
+		httpConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, HttpConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		httpConfig.setBackgroundResource(R.drawable.config);
+		httpConfig.setOnTouchListener(this);
+		httpConfig.setTextColor(Color.WHITE);
+
+	}
+
+	private void initVodConfig(){
+		vodConfig = (Button)findViewById(R.id.vodConfig);
+		vodConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, VodConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		vodConfig.setBackgroundResource(R.drawable.config);
+		vodConfig.setOnTouchListener(this);
+		vodConfig.setTextColor(Color.WHITE);
+
+	}
+	
+	private void initWifiConfig(){
+		wifiConfig = (Button)findViewById(R.id.wifiConfig);
+		wifiConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, WifiConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		wifiConfig.setBackgroundResource(R.drawable.config);
+		wifiConfig.setOnTouchListener(this);
+		wifiConfig.setTextColor(Color.WHITE);
+
+	}
+	
+	private void initAirConfig(){
+		airConfig = (Button)findViewById(R.id.airConfig);
+		airConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, AirConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		airConfig.setBackgroundResource(R.drawable.config);
+		airConfig.setOnTouchListener(this);
+		airConfig.setTextColor(Color.WHITE);
+
+	}
+	
+	private void initBlueToothConfig(){
+		blueToothConfig = (Button)findViewById(R.id.blueToothConfig);
+		blueToothConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, BlueToothConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		blueToothConfig.setBackgroundResource(R.drawable.config);
+		blueToothConfig.setOnTouchListener(this);
+		blueToothConfig.setTextColor(Color.WHITE);
+
+	}
+	
+	private void initSmsConfig(){
+		smsConfig = (Button)findViewById(R.id.smsConfig);
+		smsConfig.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, SmsConfig.class);
+            	MainActivity.this.startActivity(i);
+            }
+        });
+
+		smsConfig.setBackgroundResource(R.drawable.config);
+		smsConfig.setOnTouchListener(this);
+		smsConfig.setTextColor(Color.WHITE);
+
+	}
+	
+	private void initStart(){
+		start = (Button)findViewById(R.id.start);
+		start.setBackgroundResource(R.drawable.execute_enabled);
+		start.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	startCase();
+				return;
+            }
+        });
+		start.setOnTouchListener(this);
+	}
+
+	private void initPause(){
+		pause = (Button)findViewById(R.id.pause);
+		pause.setBackgroundResource(R.drawable.pause_disabled);
+		pause.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	startMyService(CaseRunner.ACTION_PAUSE, 0);
+            	pause.setBackgroundResource(R.drawable.pause_disabled);
+            	pause.setEnabled(false);
+            	if(!start.isEnabled())
+            		start.setEnabled(true);
+            }
+        });
+		pause.setOnTouchListener(this);
+	}
+
+	private void initStop(){
+		stop = (Button)findViewById(R.id.stop);
+		stop.setBackgroundResource(R.drawable.stop_disabled);
+		stop.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener(){
+
+					public void onClick(DialogInterface dialog, int which) {
+						startMyService(CaseRunner.ACTION_STOP, 0);
+						stop.setBackgroundResource(R.drawable.stop_disabled);
+						stop.setEnabled(false);
+						if (pause.isEnabled()) {
+							pause.setBackgroundResource(R.drawable.pause_disabled);
+							pause.setEnabled(false);
+						}
+					}
+
+            	};
+            	alertDialog.showDialog("Are you sure you want to stop the current test?", 2, listener, null);
+
+
+            }
+        });
+		stop.setOnTouchListener(this);
+	}
+
+	private void initSettings(){
+		settings = (Button)findViewById(R.id.settings);
+		settings.setBackgroundResource(R.drawable.other_settings128);
+		settings.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+            	Intent i = new Intent(MainActivity.this, Settings.class);
+            	MainActivity.this.startActivity(i);
+				//return;
+            }
+        });
+		settings.setOnTouchListener(this);
+	}
+
+	private void initRadio(){
+		voiceCallRadio = (RadioButton)findViewById(R.id.voiceRadioButton);
+		voiceDataRadio = (RadioButton)findViewById(R.id.voiceDataRadioButton);
+		ftpRadio = (RadioButton)findViewById(R.id.ftpRadioButton);
+		httpRadio = (RadioButton)findViewById(R.id.httpRadioButton);
+		vodRadio = (RadioButton)findViewById(R.id.VodRadioButton);
+		pingRadio = (RadioButton)findViewById(R.id.pingRadioButton);
+		wifiRadio = (RadioButton)findViewById(R.id.wifiRadioButton);
+		airRadio =  (RadioButton)findViewById(R.id.airRadioButton);
+		blueToothRadio = (RadioButton)findViewById(R.id.blueToothRadioButton);
+		smsRadio = (RadioButton)findViewById(R.id.smsRadioButton);
+		
+		voiceCallRadio.setOnTouchListener(this);
+		voiceCallRadio.setOnCheckedChangeListener(this);
+		
+		voiceDataRadio.setOnTouchListener(this);
+		voiceDataRadio.setOnCheckedChangeListener(this);
+		
+		ftpRadio.setOnTouchListener(this);
+		ftpRadio.setOnCheckedChangeListener(this);
+		
+		httpRadio.setOnTouchListener(this);
+		httpRadio.setOnCheckedChangeListener(this);
+		
+		vodRadio.setOnTouchListener(this);
+		vodRadio.setOnCheckedChangeListener(this);
+		
+		pingRadio.setOnTouchListener(this);
+		pingRadio.setOnCheckedChangeListener(this);
+		
+		wifiRadio.setOnTouchListener(this);
+		wifiRadio.setOnCheckedChangeListener(this);
+		
+		airRadio.setOnTouchListener(this);
+		airRadio.setOnCheckedChangeListener(this);
+		
+		blueToothRadio.setOnTouchListener(this);
+		blueToothRadio.setOnCheckedChangeListener(this);
+		
+		smsRadio.setOnTouchListener(this);
+		smsRadio.setOnCheckedChangeListener(this);
+	}
+
+	
+	private void initPercentControl(){
+		voiceCallPercent = (TextView)findViewById(R.id.voiceCallPercent);
+		voiceDataCallPercent = (TextView)findViewById(R.id.voiceDataCallPercent);
+		ftpPercent = (TextView)findViewById(R.id.ftpPercent);
+		httpPercent = (TextView)findViewById(R.id.httpPercent);
+		vodPercent = (TextView)findViewById(R.id.vodPercent);
+		pingPercent = (TextView)findViewById(R.id.pingPercent);
+		wifiPercent = (TextView)findViewById(R.id.wifiPercent);
+		airPercent = (TextView)findViewById(R.id.airPercent);
+		blueToothPercent = (TextView)findViewById(R.id.blueToothPercent);
+		smsPercent = (TextView)findViewById(R.id.smsPercent);
+	}
+
+	private void initProgressBar(){
+		voiceCallProgress = (ProgressBar)findViewById(R.id.voiceCallProgress);
+		voiceDataCallProgress = (ProgressBar)findViewById(R.id.voiceDataCallProgress);
+		ftpProgress = (ProgressBar)findViewById(R.id.ftpProgress);
+		httpProgress = (ProgressBar)findViewById(R.id.httpProgress);
+		vodProgress = (ProgressBar)findViewById(R.id.vodProgress);
+		pingProgress = (ProgressBar)findViewById(R.id.pingProgress);
+		wifiProgress = (ProgressBar)findViewById(R.id.wifiProgress);
+		airProgress = (ProgressBar)findViewById(R.id.airProgress);
+		blueToothProgress = (ProgressBar)findViewById(R.id.blueToothProgress);
+		smsProgress = (ProgressBar)findViewById(R.id.smsProgress);
+	}
+
+	private void initLog(){
+		logViewHeight();
+		logViewTitle = (TextView)findViewById(R.id.exeDetails);
+		logView = (TextView)findViewById(R.id.exeLog);
+		logView.setBackgroundColor(Color.WHITE);
+		logView.setTextColor(Color.BLACK);
+		logView.setOnTouchListener(this);
+		adjustLogViewHeight();
+
+		if(logViewHeight > 0){
+			logView.setHeight(logViewHeight);
+			realLogLines = logViewHeight / logView.getLineHeight();
+		}else{
+			logView.setMaxLines(maxLogLines);
+			logView.setMinLines(minLogLines);
+			realLogLines  = maxLogLines;
+		}
+
+		resumeLogDetails();
+	}
+
+	private void resumeLogDetails(){
+		int size = mLogList.size();
+		if(size > 0){
+			int tmp = realLogLines;
+			if(tmp > size)
+				tmp = size;
+			for(int i = 0; i < tmp; i++)
+				logView.append(mLogList.get(i));
+			return;
+		}
+		logView.setEnabled(false);
+		logViewTitle.setEnabled(false);
+	}
+
+	private void logViewHeight(){
+		int height;
+		DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        height = metrics.heightPixels;
+        logViewHeight = height / 2;
+	}
+
+	/**
+	 * some products maybe can't get the screen height
+	 */
+	private void adjustLogViewHeight(){
+		int lineHeight;
+		if(logView != null){
+			lineHeight = logView.getLineHeight();
+			if(maxLogLines * lineHeight < logViewHeight){
+				logViewHeight = -1;
+			}
+		}
+	}
+
+	private void moveLog( float distanceY) {
+		String log = null;
+		int size = mLogList.size();
+
+		if (size < 1)
+			return;
+
+		if (distanceY < 0) {
+			if (currentPos == 0)
+				return;
+
+			currentPos = currentPos - moveLines;
+			if (currentPos < 0)
+				currentPos = 0;
+
+		} else if(distanceY > 0){
+			if (currentPos >= size - 1) {
+				currentPos = size - 1;
+				return;
+			}
+
+			if (currentPos + moveLines < size - 1)
+				currentPos = currentPos + moveLines;
+			else if (currentPos + 2 < size - 1)
+				currentPos = currentPos + 2;
+			else
+				currentPos = currentPos + 1;
+		}else{
+			return;
+		}
+
+		logLines = 0;
+		for (int i = currentPos; i < size; i++) {
+			if (log == null)
+				log = mLogList.get(i);
+			else
+				log = log + mLogList.get(i);
+			logLines++;
+			if (logLines > realLogLines)
+				break;
+		}
+
+		if(logView != null)
+			logView.setText(log);
+
+	}
+
+	private static void startMyService(int action, int type){
+		Intent i = new Intent(cx, CaseRunner.class);
+		i.putExtra(CaseRunner.ACTION, action);
+		i.putExtra(CaseRunner.TYPE, type);
+		cx.startService(i);
+	}
+	
+	private static void restorePlayAfterPause(boolean bPause){
+		if(!bPause)
+			return;
+		if(pause != null){
+			if(!start.isEnabled())
+				start.setEnabled(true);
+			
+			if(pause.isEnabled()){
+				pause.setBackgroundResource(R.drawable.pause_disabled);
+				pause.setEnabled(false);
+			}
+		}
+	}
+
+	/**
+	 * The function should be called when launch new case or complete case
+	 * @param bTrue : true: when play case, else after complete case
+	 */
+	private static void disableRadio(boolean bTrue) {
+		voiceCallRadio.setEnabled(!bTrue);
+		voiceCallConfig.setEnabled(!bTrue);
+	
+		voiceDataRadio.setEnabled(!bTrue);
+		voiceDataCallConfig.setEnabled(!bTrue);
+		
+		ftpRadio.setEnabled(!bTrue);
+		ftpConfig.setEnabled(!bTrue);
+		
+		httpRadio.setEnabled(!bTrue);
+		httpConfig.setEnabled(!bTrue);
+		
+		vodRadio.setEnabled(!bTrue);
+		vodConfig.setEnabled(!bTrue);
+		
+		pingRadio.setEnabled(!bTrue);
+		pingConfig.setEnabled(!bTrue);
+		
+		wifiRadio.setEnabled(!bTrue);
+		wifiConfig.setEnabled(!bTrue);
+		
+		airRadio.setEnabled(!bTrue);
+		airConfig.setEnabled(!bTrue);
+		
+		blueToothRadio.setEnabled(!bTrue);
+		blueToothConfig.setEnabled(!bTrue);
+		
+		smsRadio.setEnabled(!bTrue);
+		smsConfig.setEnabled(!bTrue);
+
+		if (bTrue) {
+			if (!pause.isEnabled()) {
+				pause.setBackgroundResource(R.drawable.pause_enabled);
+				pause.setEnabled(true);
+			}
+			if (!stop.isEnabled()) {
+				stop.setBackgroundResource(R.drawable.stop_enabled);
+				stop.setEnabled(true);
+			}
+			if (settings.isEnabled())
+				settings.setEnabled(false);
+			if (!logView.isEnabled()) {
+				logView.setEnabled(true);
+				logViewTitle.setEnabled(true);
+			}
+
+			start.setBackgroundResource(R.drawable.execute_running);
+			start.setEnabled(false);
+		}else{
+			if (pause.isEnabled()) {
+				pause.setBackgroundResource(R.drawable.pause_disabled);
+				pause.setEnabled(false);
+			}
+			if (stop.isEnabled()) {
+				stop.setBackgroundResource(R.drawable.stop_disabled);
+				stop.setEnabled(false);
+			}
+			if (!settings.isEnabled())
+				settings.setEnabled(true);
+			start.setBackgroundResource(R.drawable.execute_enabled);
+			start.setEnabled(true);
+		}
+
+	}
+
+	private static void startCase(){
+		if (voiceCallRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.voiceCallType);
+			if(voiceCallPercent.getVisibility() != View.VISIBLE){
+				voiceCallRadio.setTextColor(Color.WHITE);
+				voiceCallRadio.setText(cx.getString(R.string.voiceCaseName));
+				voiceCallPercent.setText(R.string.percent);
+				voiceCallPercent.setVisibility(View.VISIBLE);
+				voiceCallProgress.setProgress(0);
+				voiceCallProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (pingRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.pingCaseType);
+			if(pingPercent.getVisibility() != View.VISIBLE){
+				pingRadio.setTextColor(Color.WHITE);
+				pingRadio.setText(cx.getString(R.string.pingCaseName));
+				pingPercent.setText(R.string.percent);
+				pingPercent.setVisibility(View.VISIBLE);
+				pingProgress.setProgress(0);
+				pingProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (voiceDataRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.voiceDataCallType);
+			if(voiceDataCallPercent.getVisibility() != View.VISIBLE){
+				voiceDataRadio.setTextColor(Color.WHITE);
+				voiceDataRadio.setText(cx.getString(R.string.voiceDataCaseName));
+				voiceDataCallPercent.setText(R.string.percent);
+				voiceDataCallPercent.setVisibility(View.VISIBLE);
+				voiceDataCallProgress.setProgress(0);
+				voiceDataCallProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (httpRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.httpCaseType);
+			if(httpPercent.getVisibility() != View.VISIBLE){
+				httpRadio.setTextColor(Color.WHITE);
+				httpRadio.setText(cx.getString(R.string.httpCaseName));
+				httpPercent.setText(R.string.percent);
+				httpPercent.setVisibility(View.VISIBLE);
+				httpProgress.setProgress(0);
+				httpProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (ftpRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.ftpType);
+			if(ftpPercent.getVisibility() != View.VISIBLE){
+				ftpRadio.setTextColor(Color.WHITE);
+				ftpRadio.setText(cx.getString(R.string.ftpCaseName));
+				ftpPercent.setText(R.string.percent);
+				ftpPercent.setVisibility(View.VISIBLE);
+				ftpProgress.setProgress(0);
+				ftpProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (vodRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.vodCaseType);
+			if(vodPercent.getVisibility() != View.VISIBLE){
+				vodRadio.setTextColor(Color.WHITE);
+				vodRadio.setText(cx.getString(R.string.vodCaseName));
+				vodPercent.setText(R.string.percent);
+				vodPercent.setVisibility(View.VISIBLE);
+				vodProgress.setProgress(0);
+				vodProgress.setVisibility(View.VISIBLE);
+			}
+		}else if (wifiRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.wifiCaseType);
+			if(wifiPercent.getVisibility() != View.VISIBLE){
+				wifiRadio.setTextColor(Color.WHITE);
+				wifiRadio.setText(cx.getString(R.string.wifiCaseName));
+				wifiPercent.setText(R.string.percent);
+				wifiPercent.setVisibility(View.VISIBLE);
+				wifiProgress.setProgress(0);
+				wifiProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (airRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.airCaseType);
+			if(airPercent.getVisibility() != View.VISIBLE){
+				airRadio.setTextColor(Color.WHITE);
+				airRadio.setText(cx.getString(R.string.airplaneCaseName));
+				airPercent.setText(R.string.percent);
+				airPercent.setVisibility(View.VISIBLE);
+				airProgress.setProgress(0);
+				airProgress.setVisibility(View.VISIBLE);
+			}
+		}else if (blueToothRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.blueToothCaseType);
+			if(blueToothPercent.getVisibility() != View.VISIBLE){
+				blueToothRadio.setTextColor(Color.WHITE);
+				blueToothRadio.setText(cx.getString(R.string.blueToothCaseName));
+				blueToothPercent.setText(R.string.percent);
+				blueToothPercent.setVisibility(View.VISIBLE);
+				blueToothProgress.setProgress(0);
+				blueToothProgress.setVisibility(View.VISIBLE);
+			}
+		}
+		else if (smsRadio.isChecked()) {
+			startMyService(CaseRunner.ACTION_PLAY, CaseRunner.smsCaseType);
+			if(smsPercent.getVisibility() != View.VISIBLE){
+				smsRadio.setTextColor(Color.WHITE);
+				smsRadio.setText(cx.getString(R.string.smsCaseName));
+				smsPercent.setText(R.string.percent);
+				smsPercent.setVisibility(View.VISIBLE);
+				smsProgress.setProgress(0);
+				smsProgress.setVisibility(View.VISIBLE);
+			}
+		}else{
+			reportAlert("Please select a case first!", 1);
+			return;
+		}
+		
+		disableRadio(true);
+	}
+
+	private void resumeUI(){
+		startMyService(CaseRunner.ACTION_RESOTRE_UI, 0);
+	}
+
+
+
+	/***
+	 * process thread communication
+	 * @param what
+	 * @param arg0
+	 * @param arg1
+	 */
+	private static boolean sendMessage(int what, int arg0, int arg1){
+		if(MY_HANDLER != null){
+    		Message msg = MY_HANDLER.obtainMessage(what, arg0, arg1);
+    		return MY_HANDLER.sendMessage(msg);
+    	}
+		return false;
+	}
+	
+	private static void appendExeLog(String log){
+		mLogList.add(log);
+		if(mLogList.size() > maxLogNumber){
+			mLogList.remove(0);
+		}
+		if(logLines < realLogLines){
+			if(logView != null){
+				logView.append(log);
+				logLines++;
+			}
+		}
+                logView.scrollBy(0, logLines);
+		logView.bringToFront();
+	}
+	
+	/**
+	 * show percent and progress bar
+	 */
+	private static void showProcessControl(int type, boolean bShow){
+		TextView percent = null;
+		ProgressBar progress = null;
+		
+		switch(type){
+			case CaseRunner.voiceCallType:
+				percent = voiceCallPercent;
+				progress = voiceCallProgress;	
+				break;
+			case CaseRunner.voiceDataCallType:
+				percent = voiceDataCallPercent;
+				progress = voiceDataCallProgress;
+				break;
+			case CaseRunner.ftpType:
+				percent = ftpPercent;
+				progress = ftpProgress;
+				break;
+			case CaseRunner.httpCaseType:
+				percent = httpPercent;
+				progress = httpProgress;
+				break;
+			case CaseRunner.vodCaseType:
+				percent = vodPercent;
+				progress = vodProgress;
+				break;
+			case CaseRunner.pingCaseType:
+				percent = pingPercent;
+				progress = pingProgress;
+				break;
+			case CaseRunner.wifiCaseType:
+				percent = wifiPercent;
+				progress = wifiProgress;
+				break;
+			case CaseRunner.airCaseType:
+				percent = airPercent;
+				progress = airProgress;
+				break;
+			case CaseRunner.blueToothCaseType:
+				percent = blueToothPercent;
+				progress = blueToothProgress;
+				break;
+			case CaseRunner.smsCaseType:
+				percent = smsPercent;
+				progress = smsProgress;
+				break;
+		}
+
+		if(percent != null){
+			if(bShow){
+				percent.setVisibility(View.VISIBLE);
+			}
+			else
+				percent.setVisibility(View.INVISIBLE);
+		}
+		if(progress != null){
+			if(bShow)
+				progress.setVisibility(View.VISIBLE);
+			else
+				progress.setVisibility(View.INVISIBLE);
+
+		}
+		
+	}
+
+	/**
+	 * update progress range
+	 * @param type
+	 * @param maxValue
+	 */
+	private static void setProgressMaxValue(int type, int maxValue){
+		ProgressBar progress = null;
+		switch(type){
+		case CaseRunner.voiceCallType:
+			progress = voiceCallProgress;
+			break;
+		case CaseRunner.voiceDataCallType:
+			progress = voiceDataCallProgress;
+			break;
+		case CaseRunner.ftpType:
+			progress = ftpProgress;
+			break;
+		case CaseRunner.httpCaseType:
+			progress = httpProgress;
+			break;
+		case CaseRunner.pingCaseType:
+			progress = pingProgress;
+			break;			
+		case CaseRunner.vodCaseType:
+			progress = vodProgress;
+			break;
+		case CaseRunner.wifiCaseType:
+			progress = wifiProgress;
+			break;			
+		case CaseRunner.airCaseType:
+			progress = airProgress;
+			break;
+		case CaseRunner.blueToothCaseType:
+			progress = blueToothProgress;
+			break;			
+		case CaseRunner.smsCaseType:
+			progress = smsProgress;
+			break;
+		}
+
+		if(progress != null)
+			progress.setMax(maxValue);
+	}
+
+	/**
+	 * update the case execution state
+	 * @param type
+	 * @param progressValue
+	 * @param msg
+	 */
+	private static void setExeState(int type, int progressValue, String msg){
+		String[] splitMsg = msg.split(":");
+		if(splitMsg == null || splitMsg.length < 2)
+			return;
+
+		String state = null;
+		if(splitMsg.length > 2){
+			for(int i = 2; i < splitMsg.length; i++){
+				if(state == null)
+					state = splitMsg[i];
+				else
+					state = state + ":" + splitMsg[i];
+			}
+		}
+		boolean bAlterColor = splitMsg[0].charAt(0) == '1' ? true : false;
+
+		TextView percent = null;
+		ProgressBar progress = null;
+		RadioButton radio = null;
+		String caseName = null;
+
+		switch(type){
+		case CaseRunner.voiceCallType:
+			percent = voiceCallPercent;
+			progress = voiceCallProgress;
+			radio = voiceCallRadio;
+			caseName = cx.getString(R.string.voiceCaseName);
+			break;
+		case CaseRunner.voiceDataCallType:
+			percent = voiceDataCallPercent;
+			progress = voiceDataCallProgress;
+			radio = voiceDataRadio;
+			caseName = cx.getString(R.string.voiceDataCaseName);
+			break;
+		case CaseRunner.ftpType:
+			percent = ftpPercent;
+			progress = ftpProgress;
+			radio = ftpRadio;
+			caseName = cx.getString(R.string.ftpCaseName);
+			break;
+		case CaseRunner.httpCaseType:
+			percent = httpPercent;
+			progress = httpProgress;
+			radio = httpRadio;
+			caseName = cx.getString(R.string.httpCaseName);
+			break;
+		case CaseRunner.pingCaseType:
+			percent = pingPercent;
+			progress = pingProgress;
+			radio = pingRadio;
+			caseName = cx.getString(R.string.pingCaseName);
+			break;			
+		case CaseRunner.vodCaseType:
+			percent = vodPercent;
+			progress = vodProgress;
+			radio = vodRadio;
+			caseName = cx.getString(R.string.vodCaseName);
+			break;
+		case CaseRunner.wifiCaseType:
+			percent = wifiPercent;
+			progress = wifiProgress;
+			radio = wifiRadio;
+			caseName = cx.getString(R.string.wifiCaseName);
+			break;
+		case CaseRunner.airCaseType:
+			percent = airPercent;
+			progress = airProgress;
+			radio = airRadio;
+			caseName = cx.getString(R.string.airplaneCaseName);
+			break;
+		case CaseRunner.blueToothCaseType:
+			percent = blueToothPercent;
+			progress = blueToothProgress;
+			radio = blueToothRadio;
+			caseName = cx.getString(R.string.blueToothCaseName);
+			break;
+		case CaseRunner.smsCaseType:
+			percent = smsPercent;
+			progress = smsProgress;
+			radio = smsRadio;
+			caseName = cx.getString(R.string.smsCaseName);
+			break;
+		default:
+				return;
+		}
+	
+		if(percent != null && progressValue >= 0){
+			percent.setText(splitMsg[1]);
+			percent.setBackgroundColor(R.color.blue);
+		}
+		if(progress != null && progressValue >= 0){
+			progress.setProgress(progressValue);
+		}
+		if(radio != null){
+			if(bAlterColor)
+				radio.setTextColor(Color.RED);
+			else
+				radio.setTextColor(Color.GREEN);
+			if(state != null)
+				radio.setText(caseName + "  " + state);
+			//checkBox.setChecked(true);
+
+		}
+	}
+
+	private static void reportAlert(String message, int count){
+		if(alertDialog != null){
+			alertDialog.showDialog(message, count, null, null);
+		}
+
+	}
+
+	private static void dissmissAlert(){
+		if(alertDialog != null){
+			alertDialog.cancel();
+		}
+	}
+	
+	public boolean onTouch(View v, MotionEvent event) {
+		if(v.getId() == logView.getId()){
+			topScroll.setScroll(false);
+			mDetector.onTouchEvent(event);
+			if(event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP){
+				moveLog(scrollUp);
+				scrollUp = 0;
+			}
+			return true;
+		}
+		else{
+			topScroll.setScroll(true);
+		}
+		return false;
+	}
+
+	public boolean onDown(MotionEvent arg0) {
+		return false;
+	}
+
+	public boolean onFling(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		return false;
+	}
+
+	public void onLongPress(MotionEvent arg0) {
+	}
+
+	public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2,
+			float arg3) {
+		scrollUp = arg3;
+		return false;
+	}
+
+	public void onShowPress(MotionEvent e) {
+	}
+
+	public boolean onSingleTapUp(MotionEvent e) {
+		return false;
+	}
+
+	protected void onPause (){
+		super.onPause();
+		bFront = false;
+	}
+	
+	protected void onResume (){
+		super.onResume();
+		bFront = true;
+	}
+	
+	public static boolean isFront(){
+		return bFront;
+	}
+
+	private static void setCheckedCaseRadio(int type){
+		switch(type){
+		case CaseRunner.voiceCallType:
+			voiceCallRadio.setChecked(true);
+			break;
+		case CaseRunner.voiceDataCallType:
+			voiceDataRadio.setChecked(true);
+			break;
+		case CaseRunner.ftpType:
+			ftpRadio.setChecked(true);
+			break;
+		case CaseRunner.httpCaseType:
+			httpRadio.setChecked(true);
+			break;
+		case CaseRunner.vodCaseType:
+			vodRadio.setChecked(true);
+			break;
+		case CaseRunner.pingCaseType:
+			pingRadio.setChecked(true);
+			break;
+		case CaseRunner.wifiCaseType:
+			wifiRadio.setChecked(true);
+			break;
+		case CaseRunner.airCaseType:
+			airRadio.setChecked(true);
+			break;
+		case CaseRunner.blueToothCaseType:
+			blueToothRadio.setChecked(true);
+			break;
+		case CaseRunner.smsCaseType:
+			smsRadio.setChecked(true);
+			break;
+		}			
+	}
+
+	//@Suppress({ "ResourceAsColor", "ResourceAsColor", "ResourceAsColor", "ResourceAsColor" })	
+	private void resetOtherRadio(CompoundButton buttonView, boolean isChecked){
+		if(voiceCallRadio.isChecked()){
+			if(buttonView.getId() != R.id.voiceRadioButton){
+				voiceCallRadio.setTextColor(Color.WHITE);
+				voiceCallRadio.setText(R.string.voiceCaseName);
+				voiceCallRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.voiceCallType);
+			}
+		}
+		
+		if(voiceDataRadio.isChecked()){
+			if(buttonView.getId() != R.id.voiceDataRadioButton){
+				voiceDataRadio.setTextColor(Color.WHITE);
+				voiceDataRadio.setText(R.string.voiceDataCaseName);
+				voiceDataRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.voiceDataCallType);
+			}
+		}
+		
+		if(ftpRadio.isChecked()){
+			if(buttonView.getId() != R.id.ftpRadioButton){
+				ftpRadio.setTextColor(Color.WHITE);
+				ftpRadio.setText(R.string.ftpCaseName);
+				ftpRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.ftpType);
+			}
+		}
+		
+		if(httpRadio.isChecked()){
+			if(buttonView.getId() != R.id.httpRadioButton){
+		        httpRadio.setTextColor(Color.WHITE);
+		        httpRadio.setText(R.string.httpCaseName);
+				httpRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.httpCaseType);
+			}
+		}
+		
+		if(pingRadio.isChecked()){
+			if(buttonView.getId() != R.id.pingRadioButton){
+		        pingRadio.setTextColor(Color.WHITE);
+		        pingRadio.setText(R.string.pingCaseName);
+		        pingRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.pingCaseType);
+			}
+		}		
+		
+		if(vodRadio.isChecked()){
+			if(buttonView.getId() != R.id.VodRadioButton){
+				vodRadio.setTextColor(Color.WHITE);
+				vodRadio.setText(R.string.vodCaseName);
+				vodRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.vodCaseType);
+			}
+		}
+		
+		if(wifiRadio.isChecked()){
+			if(buttonView.getId() != R.id.wifiRadioButton){
+				wifiRadio.setTextColor(Color.WHITE);
+				wifiRadio.setText(R.string.wifiCaseName);
+				wifiRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.wifiCaseType);
+			}
+		}
+		
+		if(airRadio.isChecked()){
+			if(buttonView.getId() != R.id.airRadioButton){
+				airRadio.setTextColor(Color.WHITE);
+				airRadio.setText(R.string.airplaneCaseName);
+				airRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.wifiCaseType);
+			}
+		}
+		
+		if(blueToothRadio.isChecked()){
+			if(buttonView.getId() != R.id.blueToothRadioButton){
+				blueToothRadio.setTextColor(Color.WHITE);
+				blueToothRadio.setText(R.string.blueToothCaseName);
+				blueToothRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.blueToothCaseType);
+			}
+		}
+		
+		if(smsRadio.isChecked()){
+			if(buttonView.getId() != R.id.smsRadioButton){
+				smsRadio.setTextColor(Color.WHITE);
+				smsRadio.setText(R.string.smsCaseName);
+				smsRadio.setChecked(false);
+				startMyService(CaseRunner.ACTION_RESET, CaseRunner.smsCaseType);
+			}
+		}
+	}
+	
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		if(!isChecked)
+			return;
+		resetOtherRadio(buttonView, isChecked);
+	}
+	
+	private void initCaseSelectLabel(){
+		configName = (TextView)findViewById(R.id.configName);
+		String name = ConfigProp.getCurentConfigName();
+		if(name != null){
+			setConfigName(name);
+		}
+	}
+	
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu){
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.mainmenu, menu);
+    	return true;
+    }
+	
+	private void startActivity(Class<?> cls){
+		Intent i = new Intent(MainActivity.this, cls);
+		startActivity(i);
+
+	}
+	private static void setConfigName(String name){
+		configName.setText("Using:" + name);
+	}
+	
+	private void showVersion() {
+		UdmAlertDialog versionAlert = new UdmAlertDialog(this);
+		String versionInfo = UdmActivity.appDescription + " ("
+				+ UdmActivity.appVersion + ")"
+				+ "\n" + UdmActivity.appOwner + " Product Test" 
+				+ "\n" + UdmActivity.appContact
+				+ "\n" + "Internal Version #" + UdmActivity.appInternalVersion;
+		versionAlert.showDialog(versionInfo);
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item){
+    	switch(item.getItemId()){
+    		case R.id.loadAs:
+    			startActivity(LoadActivity.class);
+    			break;
+    		case R.id.saveAs:
+    			startActivity(SaveAsActivity.class);
+    			break;
+    		case R.id.Save:
+    			ConfigProp.saveConfig(this);
+    			break;
+    		case R.id.version:
+    			showVersion();
+    			break;
+    		case R.id.ftsScreen:
+    			launchFts();
+    			break;
+    		case R.id.programmingMenu:
+    			launchTestSettings();
+    			break;
+    		case R.id.webDispatcherScreen:
+    			startActivity(WebServicesMonitorActivity.class);
+    		default:
+    			return super.onOptionsItemSelected(item);
+    	}
+    	return true;
+	}
+	
+	protected void launchFts() {
+		try {
+			Intent ftsIntent = new Intent(Intent.ACTION_MAIN);
+			ftsIntent.addCategory("android.intent.action.LAUNCHER");
+			ftsIntent.setComponent(new ComponentName("com.motorola.programmenu","com.motorola.programmenu.FtsMenuApp"));
+			startActivity(ftsIntent);
+		} catch (ActivityNotFoundException testSettingsActivityException) {
+			Log.e("UDM", "Build not supported", testSettingsActivityException);
+			Context context = getApplicationContext();
+			Toast toast = Toast.makeText(context,"Factory Test Screen (FTS) is not available.\n                (CDMA devices only.)",Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+			toast.show();
+		}
+	}
+
+	protected void launchTestSettings() {
+		try {
+			Intent testSettingsIntent = new Intent(Intent.ACTION_MAIN);
+			testSettingsIntent.addCategory("android.intent.action.LAUNCHER");
+			testSettingsIntent.setComponent(new ComponentName("com.android.settings","com.android.settings.TestingSettings"));
+			startActivity(testSettingsIntent);
+		} catch (ActivityNotFoundException testSettingsActivityException) {
+			Log.e("UDM", "Build not supported", testSettingsActivityException);
+			Context context = getApplicationContext();
+			Toast toast = Toast.makeText(context,"Test settings is not available.", Toast.LENGTH_LONG);
+			toast.setGravity(Gravity.CENTER_HORIZONTAL, 0, 0);
+			toast.show();
+		}
+	}
+	
+	private static boolean launcCaseByCmd(int type){
+		if(!start.isEnabled())
+			return false;
+		
+		switch(type){
+		case CaseRunner.voiceCallType:
+			voiceCallRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.voiceDataCallType:
+			voiceDataRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.ftpType:
+			ftpRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.httpCaseType:
+			httpRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.pingCaseType:
+			pingRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.vodCaseType:
+			vodRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.wifiCaseType:
+			wifiRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.airCaseType:
+			airRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.blueToothCaseType:
+			blueToothRadio.setChecked(true);
+			startCase();
+			return true;
+		case CaseRunner.smsCaseType:
+			smsRadio.setChecked(true);
+			startCase();
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public static void stopCase(){
+		startMyService(CaseRunner.ACTION_STOP, 0);
+		stop.setBackgroundResource(R.drawable.stop_disabled);
+		stop.setEnabled(false);
+		if (pause.isEnabled()) {
+			pause.setBackgroundResource(R.drawable.pause_disabled);
+			pause.setEnabled(false);
+		}
+	}
+	
+	public static void pauseCase(){
+		startMyService(CaseRunner.ACTION_PAUSE, 0);
+    	pause.setBackgroundResource(R.drawable.pause_disabled);
+    	pause.setEnabled(false);
+    	if(!start.isEnabled())
+    		start.setEnabled(true);
+	}
+	
+	public static void resumeCase(){
+		if(!pause.isEnabled()){
+			pause.setEnabled(true);
+			pause.setBackgroundResource(R.drawable.pause_enabled);
+		}
+		
+		if(start.isEnabled())
+    		start.setEnabled(false);
+	}
+		
+	private void initDmcFolder() {
+		new InitDmcFolderTask().execute();
+	}
+	
+	private class InitDmcFolderTask extends AsyncTask<Void, Void, Void> {
+		@Override
+		protected synchronized Void doInBackground(Void... params) {
+			File dmcFolder = new File(PropertyManager.DMC_FILE_FOLDER);
+			
+			if (dmcFolder.isDirectory()) {
+				return null;
+			}
+			
+			dmcFolder.mkdirs();
+			
+		    AssetManager assetManager = getAssets();
+		    String[] files = null;
+		    try {
+		        files = assetManager.list("dmc");
+		    } catch (IOException e) {
+		        Log.e("DmcLoad", "Listing files error " + e.getMessage());
+		    }
+		    
+		    for(String filename : files) {
+		        InputStream in = null;
+		        OutputStream out = null;
+		        try {
+		          in = assetManager.open("dmc/" + filename);
+		          out = new FileOutputStream(PropertyManager.DMC_FILE_FOLDER + filename);
+		          copyFile(in, out);
+		          in.close();
+		          in = null;
+		          out.flush();
+		          out.close();
+		          out = null;
+		        } catch(Exception e) {
+		            Log.e("DmcLoad",  "Moving file error " + e.getMessage());
+		        }       
+		    }
+			
+			return null;
+		}
+		
+		private void copyFile(InputStream in, OutputStream out) throws IOException {
+		    byte[] buffer = new byte[1024];
+		    int read;
+		    while((read = in.read(buffer)) != -1){
+		      out.write(buffer, 0, read);
+		    }
+		}
+		
+	}
+	
+}

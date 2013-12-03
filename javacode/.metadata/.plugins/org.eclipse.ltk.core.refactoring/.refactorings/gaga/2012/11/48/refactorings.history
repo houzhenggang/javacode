@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move element &apos;LaunchSettings.java&apos; to &apos;gaga/src/xiaoxiao.cn&apos;&#x0D;&#x0A;- Original project: &apos;gaga&apos;&#x0D;&#x0A;- Destination element: &apos;gaga/src/xiaoxiao.cn&apos;&#x0D;&#x0A;- Original element: &apos;LaunchSettings.java&apos;&#x0D;&#x0A;- Update references to refactored element" description="Move compilation unit" destination="/src&lt;xiaoxiao.cn" element1="/src&lt;{LaunchSettings.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.move" policy="org.eclipse.jdt.ui.moveResources" qualified="false" references="true" stamp="1353986796667" units="1" version="1.0"/>
+</session>

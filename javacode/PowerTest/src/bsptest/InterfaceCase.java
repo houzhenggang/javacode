@@ -1,0 +1,6 @@
+package bsptest;
+
+interface InterfaceCase
+{
+
+}

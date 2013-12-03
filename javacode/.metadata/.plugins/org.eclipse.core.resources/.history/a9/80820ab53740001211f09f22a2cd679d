@@ -1,0 +1,5 @@
+package jxl.write;
+
+public class Label {
+
+}

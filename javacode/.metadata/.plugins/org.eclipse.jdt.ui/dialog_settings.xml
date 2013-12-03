@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item value="0" key="org.eclipse.jdt.uiformatter_page.white_space.java_view.inner"/>
+	<item value="938" key="org.eclipse.jdt.uiformatter_pagemodify_dialog.preferred_height"/>
+	<item value="JavaSE-1.7" key="org.eclipse.jdt.ui.last.selected.execution.enviroment"/>
+	<item value="2" key="TypeHierarchyViewPart.hierarchyview"/>
+	<item value="0" key="org.eclipse.jdt.uiformatter_page.white_space_tab_page.node"/>
+	<item value="true" key="ProjectSelectionDialog.show_all"/>
+	<item value="true" key="org.eclipse.jdt.ui.codeformatter.create_profile_dialog.open_edit"/>
+	<item value="G:\android-sdk-windows\platforms\android-18" key="org.eclipse.jdt.ui.lastextjar"/>
+	<item value="false" key="TypeHierarchyViewPart.qualifiednames"/>
+	<item value="3" key="TypeHierarchyViewPart.orientation"/>
+	<item value="0" key="org.eclipse.jdt.uiformatter_page.modify_dialog_tab_page.last_focus_index"/>
+	<item value="false" key="TypeHierarchyViewPart.linkeditors"/>
+	<item value="0" key="org.eclipse.jdt.uiformatter_pagemodify_dialog.preferred_x"/>
+	<item value="G:\code\testing\UIAutomatorTest" key="org.eclipse.jdt.ui.last.external.project"/>
+	<item value="1049" key="org.eclipse.jdt.uiformatter_pagemodify_dialog.preferred_width"/>
+	<item value="6" key="org.eclipse.jdt.uiformatter_pagemodify_dialog.last_focus"/>
+	<item value="1" key="org.eclipse.jdt.uiformatter_page.line_wrapping_tab_page.last_category_index"/>
+	<item value="0" key="org.eclipse.jdt.uiformatter_pagemodify_dialog.preferred_y"/>
+	<section name="OptionalMessageDialog.hide.">
+		<item value="true" key="org.eclipse.jdt.ui.typecomment.deprecated"/>
+	</section>
+	<section name="SelfEncapsulateFieldWizard">
+		<item value="false" key="GenerateJavadoc"/>
+	</section>
+	<section name="OverrideMethodDialog">
+		<item value="true" key="showtypes"/>
+	</section>
+	<section name="org.eclipse.jdt.internal.ui.wizards.buildpaths.NewVariableEntryDialog">
+		<item value="577" key="DIALOG_WIDTH"/>
+		<item value="65" key="DIALOG_Y_ORIGIN"/>
+		<item value="78" key="DIALOG_X_ORIGIN"/>
+		<item value="438" key="DIALOG_HEIGHT"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="BuildPathsPropertyPage">
+		<item value="2" key="pageIndex"/>
+	</section>
+	<section name="JavaSearchPage">
+		<item value="false" key="CASE_SENSITIVE"/>
+		<item value="11" key="INCLUDE_MASK"/>
+		<item value="0" key="HISTORY_SIZE"/>
+	</section>
+	<section name="DialogBounds_SuperInterfaceSelectionDialog">
+		<item value="373" key="DIALOG_WIDTH"/>
+		<item value="-60" key="DIALOG_Y_ORIGIN"/>
+		<item value="596" key="DIALOG_HEIGHT"/>
+		<item value="100" key="DIALOG_X_ORIGIN"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+	</section>
+	<section name="RefactoringWizard.preview">
+		<item value="400" key="height"/>
+		<item value="600" key="width"/>
+	</section>
+	<section name="quick_assist_proposal_size">
+	</section>
+	<section name="ClasspathContainerSelectionPage">
+		<item value="2" key="index"/>
+	</section>
+	<section name="SourceActionDialog.methods">
+		<item value="false" key="Comments"/>
+		<item value="1" key="VisibilityModifier"/>
+		<item value="false" key="SynchronizedModifier"/>
+		<item value="false" key="FinalModifier"/>
+	</section>
+	<section name="javadoc">
+		<item value="false" key="nodeprecatedlist"/>
+		<item value="false" key="notree"/>
+		<item value="true" key="splitindex"/>
+		<item value="C:\Program Files (x86)\Java\jdk1.7.0_03\bin\javadoc.exe" key="javadoc_command_history"/>
+		<item value="true" key="use"/>
+		<item value="false" key="nonavbar"/>
+		<item value="package" key="access"/>
+		<item value="true" key="version"/>
+		<item value="false" key="nodeprecated"/>
+		<item value="G:\javadai\Interface\doc" key="destdir"/>
+		<item value="true" key="author"/>
+		<item value="" key="docletname"/>
+		<item value="1.7" key="source"/>
+		<item value="false" key="openinbrowser"/>
+		<item value="false" key="noindex"/>
+		<item value="" key="docletpath"/>
+		<item value="G:\javadai\Interface\javadoc.xml" key="antpath"/>
+		<item value="true" key="fromStandard"/>
+		<item value="-encoding utf-8 -charset utf-8  " key="vmparam"/>
+		<section name="projects">
+			<section name="EX10_05">
+				<item value="G:\javadai\EX10_05\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\EX10_05\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="study">
+				<item value="G:\javadai\study\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\study\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="BsptestActivity">
+				<item value="G:\javadai\BsptestActivity\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\BsptestActivity\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Touch">
+				<item value="G:\javadai\Touch\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Touch\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="UCtest">
+				<item value="E:\javadai\UCtest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\UCtest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Test">
+				<item value="G:\code\testing\UIAutomatorTest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\code\testing\UIAutomatorTest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="test1">
+				<item value="E:\javadai\test1\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\test1\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="XmlStudy">
+				<item value="G:\javadai\XmlStudy\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\XmlStudy\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="UIautomatorStudy">
+				<item value="G:\javadai\UIautomatorStudy\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\UIautomatorStudy\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="PowerTest">
+				<item value="G:\javadai\PowerTest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\PowerTest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="BarCodeTest">
+				<item value="G:\javadai\BarCodeTest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\BarCodeTest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="StressTest">
+				<item value="E:\javadai\StressTest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\StressTest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="BsptestMedia">
+				<item value="G:\javadai\BsptestMedia\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\BsptestMedia\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest4">
+				<item value="E:\javadai\Uitest4\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest4\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest5">
+				<item value="E:\javadai\Uitest5\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest5\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest2">
+				<item value="E:\javadai\Uitest2\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest2\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="MTest">
+				<item value="G:\javadai\MTest\src\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\MTest\src\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest3">
+				<item value="E:\javadai\Uitest3\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest3\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="test4">
+				<item value="E:\javadai\test4\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\test4\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="test5">
+				<item value="E:\javadai\test5\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\test5\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="test3">
+				<item value="E:\javadai\test3\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\test3\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="ZXingTestActivity">
+				<item value="G:\javad\zxing-1.6\androidtest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javad\zxing-1.6\androidtest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Interface">
+				<item value="G:\javadai\Interface\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Interface\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest8">
+				<item value="G:\javadai\Uitest8\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Uitest8\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="QIAOZI_ZXing">
+				<item value="G:\javad\QIAOZI_ZXing\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javad\QIAOZI_ZXing\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest7">
+				<item value="E:\javadai\Uitest7\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest7\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest6">
+				<item value="E:\javadai\Uitest6\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest6\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="InterfaceStudy1">
+				<item value="G:\javadai\InterfaceStudy1\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\InterfaceStudy1\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uitest">
+				<item value="E:\javadai\Uitest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uitest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="TryInterface">
+				<item value="E:\javadai\TryInterface\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\TryInterface\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="InterfaceStudy">
+				<item value="G:\javadai\InterfaceStudy\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\InterfaceStudy\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="SignalAcquisition">
+				<item value="G:\javadai\SignalAcquisition\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\SignalAcquisition\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="bsptest">
+				<item value="E:\javadai\bsptest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\bsptest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Hongmi">
+				<item value="G:\javadai\Hongmi\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Hongmi\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Common">
+				<item value="E:\javadai\Common\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Common\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="ModemTest">
+				<item value="G:\javadai\ModemTest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\ModemTest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="ZXing">
+				<item value="G:\javad\ZXing\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javad\ZXing\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Mail">
+				<item value="G:\javadai\Mail\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Mail\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="BsptestView">
+				<item value="G:\javadai\BsptestView\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\BsptestView\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Calltest">
+				<item value="E:\javadai\Calltest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Calltest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Uifrist">
+				<item value="E:\javadai\Uifrist\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Uifrist\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Stability">
+				<item value="G:\javadai\Stability\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Stability\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="PowerMessure">
+				<item value="G:\javadai\PowerMessure\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\PowerMessure\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="PowerScreen">
+				<item value="G:\javadai\PowerScreen\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\PowerScreen\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Activity02">
+				<item value="E:\javadai\Activity02\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\Activity02\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Mi3Test">
+				<item value="G:\javadai\Mi3Test\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Mi3Test\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="EX07_03">
+				<item value="E:\javadai\EX07_03\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\EX07_03\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="testing">
+				<item value="G:\javadai\testing\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\testing\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="MediaLogTest">
+				<item value="G:\javadai\MediaLogTest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\MediaLogTest\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="EX08_02">
+				<item value="E:\javadai\EX08_02\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="E:\javadai\EX08_02\javadoc.xml" key="antpath"/>
+			</section>
+			<section name="Stest">
+				<item value="G:\javadai\Stest\doc" key="destdir"/>
+				<item value="" key="href"/>
+				<item value="G:\javadai\Stest\javadoc.xml" key="antpath"/>
+			</section>
+		</section>
+	</section>
+	<section name="org.eclipse.jdt.internal.ui.dialogs.OpenTypeSelectionDialog2">
+		<item value="true" key="ShowStatusLine"/>
+		<item value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x0D;&#x0A;&lt;History/&gt;" key="History"/>
+	</section>
+	<section name="org.eclipse.jdt.internal.ui.dialogs.FilteredTypesSelectionDialog">
+		<item value="true" key="ShowStatusLine"/>
+		<item value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x0D;&#x0A;&lt;History/&gt;" key="History"/>
+		<section name="DialogBoundsSettings">
+			<item value="600" key="DIALOG_WIDTH"/>
+			<item value="-21" key="DIALOG_Y_ORIGIN"/>
+			<item value="27" key="DIALOG_X_ORIGIN"/>
+			<item value="500" key="DIALOG_HEIGHT"/>
+			<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+		</section>
+	</section>
+	<section name="org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart">
+		<item value="true" key="group_libraries"/>
+		<item value="false" key="linkWithEditor"/>
+		<item value="2" key="layout"/>
+		<item value="1" key="rootMode"/>
+		<item value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#x0D;&#x0A;&lt;packageExplorer group_libraries=&quot;1&quot; layout=&quot;2&quot; linkWithEditor=&quot;0&quot; rootMode=&quot;1&quot; workingSetName=&quot;Aggregate for window 1337775810023&quot;&gt;&#x0D;&#x0A;&lt;customFilters userDefinedPatternsEnabled=&quot;false&quot;&gt;&#x0D;&#x0A;&lt;xmlDefinedFilters&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.LibraryFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.LocalTypesFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.StaticsFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.pde.ui.ExternalPluginLibrariesFilter1&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.ClosedProjectsFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.NonSharedProjectsFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.NonJavaElementFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.ContainedLibraryFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.CuAndClassFileFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.NonJavaProjectsFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.internal.ui.PackageExplorer.EmptyInnerPackageFilter&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.PackageDeclarationFilter&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.internal.ui.PackageExplorer.EmptyPackageFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.ImportDeclarationFilter&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.FieldsFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.internal.ui.PackageExplorer.HideInnerClassFilesFilter&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.NonPublicFilter&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer_patternFilterId_.*&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.EmptyLibraryContainerFilter&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.pde.ui.BinaryProjectFilter1&quot; isEnabled=&quot;false&quot;/&gt;&#x0D;&#x0A;&lt;child filterId=&quot;org.eclipse.jdt.ui.PackageExplorer.SyntheticMembersFilter&quot; isEnabled=&quot;true&quot;/&gt;&#x0D;&#x0A;&lt;/xmlDefinedFilters&gt;&#x0D;&#x0A;&lt;/customFilters&gt;&#x0D;&#x0A;&lt;/packageExplorer&gt;" key="memento"/>
+	</section>
+	<section name="completion_proposal_size">
+	</section>
+	<section name="JavaElementSearchActions">
+	</section>
+	<section name="org.eclipse.ltk.ui.refactoring.settings">
+		<item value="false" key="updateQualifiedNames"/>
+		<item value="*" key="patterns"/>
+		<item value="1" key="updateSimilarElementsMatchStrategy"/>
+		<item value="false" key="updateTextualMatches"/>
+		<item value="false" key="updateSimilarElements"/>
+	</section>
+	<section name="JavadocWizardDialog">
+		<item value="616" key="DIALOG_WIDTH"/>
+		<item value="169" key="DIALOG_Y_ORIGIN"/>
+		<item value="660" key="DIALOG_X_ORIGIN"/>
+		<item value="659" key="DIALOG_HEIGHT"/>
+		<item value="1|微软雅黑|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|微软雅黑" key="DIALOG_FONT_NAME"/>
+	</section>
+</section>

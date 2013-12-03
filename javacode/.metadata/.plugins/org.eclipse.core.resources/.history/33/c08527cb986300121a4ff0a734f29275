@@ -1,0 +1,331 @@
+package mars.activity02;
+
+import java.util.Date;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+public class EX07_03 extends Activity
+{
+  private TextView mTextView01;
+  private ImageView mImageView01;
+  private LayoutInflater mInflater01;
+  private View mView01;
+  private EditText mEditText01,mEditText02;
+  static final private int MENU_ABOUT = Menu.FIRST;
+  static final private int MENU_EXIT = Menu.FIRST+1;
+  private Handler mHandler01 = new Handler();
+  private Handler mHandler02 = new Handler();
+  private Handler mHandler03 = new Handler();
+  private Handler mHandler04 = new Handler();
+  private int intCounter1, intCounter2;
+  private int intCounter3, intCounter4;
+  private int intDrawable=0;
+  private Date lastUpdateTime;
+  private long timePeriod;
+  private float fHoldStillSecond = (float) 0;
+  private boolean bIfRunScreenSaver;
+  private boolean bFadeFlagOut, bFadeFlagIn = false;
+  private long intervalScreenSaver = 1000;
+  private long intervalKeypadeSaver = 1000;
+  private long intervalFade = 100;
+  private int screenWidth, screenHeight;
+  private int intSecondsToChange = 5;
+  private static int[] screenDrawable = new int[]
+  {
+	R.drawable1.xjh000,
+    R.drawable.screen1,
+    R.drawable.screen2,
+    R.drawable.screen3,
+    R.drawable.screen4,
+    R.drawable.screen5,
+    R.drawable.screen6,
+    R.drawable.screen7,
+    R.drawable.screen8,
+    R.drawable.screen9,
+    R.drawable.screen10,
+    R.drawable.screen11,
+    R.drawable.screen12,
+    R.drawable.screen13,
+    R.drawable.screen14,
+    R.drawable.screen15,
+    R.drawable.screen16,
+    R.drawable.screen17,
+    R.drawable.screen18,
+    R.drawable.screen19,
+    R.drawable.screen20,
+    R.drawable.screen21,
+    R.drawable.screen22,
+    R.drawable.screen23,
+    R.drawable.screen24,
+    R.drawable.screen25,
+    R.drawable.screen26,
+    R.drawable.screen27,
+    R.drawable.screen28,
+    R.drawable.screen29,
+    R.drawable.screen30,
+    R.drawable.screen31,
+    R.drawable.screen32,
+    R.drawable.screen33,
+    R.drawable.screen34,
+    R.drawable.screen35,
+    R.drawable.screen36,
+    R.drawable.screen37,
+    R.drawable.screen38,
+    R.drawable.screen39,
+    R.drawable.screen40,
+    R.drawable.screen41,
+    R.drawable.screen42,
+    R.drawable.screen43,
+    R.drawable.screen44,
+    R.drawable.screen45,
+    R.drawable.screen46,
+    R.drawable.screen47,
+    R.drawable.screen48,
+    R.drawable.screen49,
+    R.drawable.screen50,
+    R.drawable.screen51,
+    R.drawable.screen52,
+    R.drawable.screen53,
+    R.drawable.screen54,
+    R.drawable.screen55,
+    R.drawable.screen56,
+    R.drawable.screen57,
+    R.drawable.screen58,
+    R.drawable.screen59,
+    R.drawable.screen60,
+    R.drawable.screen61,
+    R.drawable.screen62,
+    R.drawable.screen63,
+    R.drawable.screen64,
+    R.drawable.screen65
+  };
+  
+  /** Called when the activity is first created. */
+  @Override
+  public void onCreate(Bundle savedInstanceState)
+  {
+    super.onCreate(savedInstanceState);
+    requestWindowFeature(Window.FEATURE_NO_TITLE);
+    getWindow().setFlags
+    (
+      WindowManager.LayoutParams.FLAG_FULLSCREEN,
+      WindowManager.LayoutParams.FLAG_FULLSCREEN
+    );
+    setContentView(R.layout.other);
+
+    mImageView01 = (ImageView)findViewById(R.id.myImageView1);
+    lastUpdateTime = new Date(System.currentTimeMillis());
+    }
+  
+ 
+  
+
+  private Runnable mTasks01 = new Runnable() 
+  {
+    public void run() 
+    {
+      intCounter1++;
+          mHandler02.postDelayed(mTasks02, intervalScreenSaver);
+          if(intCounter1%(intSecondsToChange)==0)
+          {
+            bFadeFlagOut=true;
+            mHandler03.postDelayed(mTasks03, intervalFade);
+          }
+          else
+          {
+            if(bFadeFlagOut==true)
+            {
+              bFadeFlagIn=true;
+              mHandler04.postDelayed(mTasks04, intervalFade);
+            }
+            else
+            {
+              bFadeFlagIn=false;
+              intCounter4 = 0;
+              mHandler04.removeCallbacks(mTasks04);
+            }
+            intCounter3 = 0;
+            bFadeFlagOut = false;
+          }
+          bIfRunScreenSaver = true;
+        }
+ 
+      
+      
+  };
+
+  private Runnable mTasks02 = new Runnable() 
+  {
+    public void run() 
+    {
+      
+        intCounter2++;
+        
+
+        showScreenSaver();
+        
+        mHandler02.postDelayed(mTasks02, intervalScreenSaver);
+     
+     
+    } 
+  };
+  
+
+  private Runnable mTasks03 = new Runnable() 
+  {
+    public void run() 
+    {
+     
+        intCounter3++;
+        
+        mImageView01.setAlpha(255-intCounter3*28);
+        
+        Log.i("HIPPO", "Fade out:"+Integer.toString(intCounter3));
+        mHandler03.postDelayed(mTasks03, intervalFade);
+     
+    } 
+  };
+  
+  private Runnable mTasks04 = new Runnable() 
+  {
+    public void run() 
+    {
+      
+        intCounter4++;
+        mImageView01.setAlpha(intCounter4*28);
+        
+        mHandler04.postDelayed(mTasks04, intervalFade);
+        Log.i("HIPPO", "Fade In:"+Integer.toString(intCounter4));
+      
+    } 
+  };
+
+  private void showScreenSaver()
+  {   
+    if(intDrawable>64)
+    {
+      intDrawable = 0;
+    }
+    
+    DisplayMetrics dm=new DisplayMetrics();
+    getWindowManager().getDefaultDisplay().getMetrics(dm);
+    screenWidth = dm.widthPixels;
+    screenHeight = dm.heightPixels;
+    Bitmap bmp=BitmapFactory.decodeResource(getResources(), screenDrawable[intDrawable]);
+    float scaleWidth = ((float) screenWidth) / bmp.getWidth();
+    float scaleHeight = ((float) screenHeight) / bmp.getHeight() ;
+    
+    Matrix matrix = new Matrix(); 
+    matrix.postScale(scaleWidth, scaleHeight);
+    Bitmap resizedBitmap = Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),matrix,true);
+    BitmapDrawable myNewBitmapDrawable = new BitmapDrawable(resizedBitmap); 
+    mImageView01.setImageDrawable(myNewBitmapDrawable);
+    mImageView01.setVisibility(View.VISIBLE);
+    if(intCounter2%intSecondsToChange==0)
+    {
+      intDrawable++;
+    }
+  }
+  
+  
+  
+  public void updateUserActionTime()
+  {
+    Date timeNow = new Date(System.currentTimeMillis());
+    timePeriod = (long)timeNow.getTime() - (long)lastUpdateTime.getTime();
+    lastUpdateTime.setTime(timeNow.getTime());
+  }
+  
+  public void resetScreenSaverListener()
+  {
+    mHandler01.removeCallbacks(mTasks01);
+    mHandler02.removeCallbacks(mTasks02);
+    Date timeNow = new Date(System.currentTimeMillis());
+
+    timePeriod = (long)timeNow.getTime() - (long)lastUpdateTime.getTime();
+    lastUpdateTime.setTime(timeNow.getTime());
+    bIfRunScreenSaver = false;
+    intCounter1 = 0;
+    intCounter2 = 0;
+    mHandler01.postDelayed(mTasks01, intervalKeypadeSaver);
+  }
+  
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event)
+  {
+    // TODO Auto-generated method stub
+    if(bIfRunScreenSaver==true && keyCode!=4)
+    {
+    
+    }
+    else
+    {
+      updateUserActionTime();
+    }
+    return super.onKeyDown(keyCode, event);
+  }
+
+  @Override
+  public boolean onTouchEvent(MotionEvent event)
+  {
+    // TODO Auto-generated method stub
+    if(bIfRunScreenSaver==true)
+    {
+ 
+    }
+    else
+    {
+      updateUserActionTime();
+    }
+    return super.onTouchEvent(event);
+  }
+  
+  @Override
+  protected void onResume()
+  {
+    // TODO Auto-generated method stub
+    mHandler01.postDelayed(mTasks01, intervalKeypadeSaver);
+    super.onResume();
+  }
+  
+  @Override
+  protected void onPause()
+  {
+    // TODO Auto-generated method stub
+    
+    try
+    {
+      mHandler01.removeCallbacks(mTasks01);
+      mHandler02.removeCallbacks(mTasks02);
+      mHandler03.removeCallbacks(mTasks03);
+      mHandler04.removeCallbacks(mTasks04);
+    }
+    catch(Exception e)
+    {
+      e.printStackTrace();
+    }
+    super.onPause();
+  }
+}
+  

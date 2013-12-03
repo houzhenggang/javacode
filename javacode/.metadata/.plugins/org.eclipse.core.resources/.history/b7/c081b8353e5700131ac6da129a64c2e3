@@ -1,0 +1,813 @@
+package bsptest.stability;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.text.SimpleDateFormat;
+import android.os.SystemClock;
+import java.util.Date;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import android.net.NetworkInfo;
+import android.os.RemoteException;
+import android.util.Log;
+import android.widget.TextView;
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.core.UiWatcher;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+/**
+*Interface 接口的具体函数在米3 MIUI的具体实现。
+* @version 1.0, 2013-08-23
+* @author 薛敬浩
+* @return true if successful else false
+*/ 
+
+class MI3 extends UiAutomatorTestCase implements IStability
+{
+	/**给全局变量赋值，值为{@value}*/
+	private int i = 1;
+	/** 给全局变量赋值*/
+	private static final String ACTIVITY_TAG="bsptest";
+	private int result1 =-1;
+	private int j = 0;
+	/**
+	*在XML配置文件中读取String类型的字符创
+	* @return true if successful else false
+	*/ 
+	private void RunCommand(String shellCommand){
+		try {
+			Runtime.getRuntime().exec(shellCommand);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/*获取当前的时间*/
+	public String getTime(String time){
+		SimpleDateFormat date1 = new SimpleDateFormat(time);
+		String Time = date1.format(new Date());
+		return Time;
+	}
+	
+	// 在XML中读取字符串
+	private static String getParameterStr(String packageName,String voidName,String parameterName) throws ParserConfigurationException, SAXException, IOException
+	{
+		String parameter = "";
+		File f = new File("/sdcard/settings.xml");
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = factory.newDocumentBuilder();
+		Document doc = builder.parse(f);
+		Element allList = doc.getDocumentElement();
+		//获取一级目录的参数名
+		NodeList nodeList = doc.getElementsByTagName("package");
+		for (int i = 0;i < nodeList.getLength();i++){
+			Node node = nodeList.item(i);
+			Node dataXml = node.getAttributes().getNamedItem("name");
+			String data = dataXml.getTextContent();
+			if(data.equals(packageName)){
+				//获取二级目录的参数名
+				Element element = (Element)node;
+				NodeList nodeList1 =  element.getElementsByTagName("method");
+				for (int j = 0;j < nodeList1.getLength();j++){
+					Node node2 = nodeList1.item(j);
+					Node dataXml1 = node2.getAttributes().getNamedItem("name");
+					String data1 = dataXml1.getTextContent();
+					if(data1.equals(voidName)){
+						//获取具体的参数
+						Element element1 = (Element)node2;
+						NodeList nodeList2=element1.getElementsByTagName(parameterName);
+						parameter = nodeList2.item(0).getTextContent();
+					}
+				}
+			}
+		}
+		
+		return parameter ;
+	}
+	/**
+	*在XML配置文件中读取int类型的整型
+	* @return true if successful else false
+	*/ 
+	private static int getParameterInt(String packageName,String voidName,String parameterName) throws ParserConfigurationException, SAXException, IOException
+	{
+		int parameter = 0;
+		return parameter = Integer.parseInt(getParameterStr(packageName,voidName,parameterName), 10); 
+	}
+	
+	/**
+	 *ReadXmlInt(string) 可以读取XML中的int型数据。<br> 
+	 *ReadXmlString(string)可以读取XML中的string型字符串。<br> 
+	 *UiObject waitApp = new UiObject(new UiSelector().textContains("暂停通话"))
+	 *的存在与否可以判断通话是否成功。<br> 
+	 *Log.v(MI3.ACTIVITY_TAG, "Modemtest CallMo fail ------------"+i)
+	 *会将运行fail的结果输入到logcat中<br>
+	 *@see #CallMotest()
+	 *@param ReadXmlInt("loop") 为循环的Loop次数<br> 
+	 *@param ReadXmlString("callNum") 为拨打电话的号码<br> 
+	 *@return true if the device has a phone else false
+	*/
+	public void CallMotest(){
+		try {
+			for( i = 1; i <= getParameterInt("Stability","CallTest","loop");i++)
+			{
+				/**
+				 * 预防在程序运行中出现的紧急窗口
+				 */
+				CrashBug();
+				Process mkdir= Runtime.getRuntime().exec("mkdir /sdcard/Satibiility");
+				sleep((long) 1000);
+				Process startCall= Runtime.getRuntime().exec("am start -a android.intent.action.CALL -d tel:"+ getParameterStr("Stability","CallTest","number"));
+				sleep((long) 2000);
+				UiObject MoreButton = new UiObject(new UiSelector().
+						className("android.widget.ToggleButton").index(0).instance(2));
+				if(MoreButton.exists())
+				{
+					MoreButton.click();
+				}
+				UiObject wait1App = new UiObject(new UiSelector().textContains("正在拨号"));
+				wait1App.waitUntilGone((long) 60000.0);
+				UiObject waitApp = new UiObject(new UiSelector().textContains("暂停通话"));
+	
+				if(waitApp.exists()&& waitApp.isEnabled())
+				{
+					Log.v(MI3.ACTIVITY_TAG, "Modemtest CallMo Ok ------------"+i);
+					File logcatFile=new File("/sdcard/Satibiility/Pass_CallTest.txt");
+					logcatFile.createNewFile();
+					FileOutputStream outputLogcat=new FileOutputStream(logcatFile,true);
+					String Calltest = "Calltest Pass "+i+"th.";
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat.write((date1.format(new Date())+"---"+Calltest+"\n").getBytes());
+					if(getParameterInt("Stability","CallTest","endcall") ==1)
+					{
+						sleep((long) getParameterInt("Stability","CallTest","calltime"));
+						UiObject endButton = new UiObject(new UiSelector().
+								className("android.widget.Button").index(1));
+						if(endButton.exists()){
+							endButton.click();
+						}
+					}else
+					{
+						sleep((long) getParameterInt("Stability","CallTest","calltime"));
+					}
+					
+		
+				}else
+				{
+					UiObject endButton = new UiObject(new UiSelector().
+							className("android.widget.Button").index(1));
+					if(endButton.exists()){
+						endButton.click();
+					}
+					Log.v(MI3.ACTIVITY_TAG, "Modemtest CallMo fail ------------"+i);
+					UiDevice.getInstance().takeScreenshot(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".png"));
+					File logcatFile=new File("/sdcard/Satibiility/Fail_CallTest.txt");
+					logcatFile.createNewFile();
+					FileOutputStream outputLogcat=new FileOutputStream(logcatFile,true);
+					String Calltest = "Calltest fail "+i;
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat.write((date1.format(new Date())+"---"+Calltest+"\n").getBytes());
+				}
+				sleep((long) getParameterInt("Stability","CallTest","looptime"));
+		
+			}
+		}catch(Exception e) {
+			// TODO Auto-generated catch block
+			try {
+				//调用System.setErr()方法，将out流写入文件，因为printStackTrace是把消息输出到System.err的，所以要只要重定向System.err即可
+				//如果不重新定向，e.printStackTrace()只作为cmd端口输出
+				//然后根据文件的路径可以编辑文件保存的路径和文件截图的名字，下面是以时间命名的
+				System.setErr(new PrintStream(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".txt")));
+				e.printStackTrace();
+				e.getMessage();
+				UiDevice.getInstance().takeScreenshot(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".png"));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				//try catch中可以嵌套多个try catch
+				//这个catch 是为了避免重定义System.setErr()方法的时候找不到文件。
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	public void SmsMoTest() throws Exception{
+		try {
+			for(i = 1; i <= getParameterInt("Stability","SmsTest","loop");i++)
+			{
+				CrashBug();
+				RunCommand("am force-stop com.android.mms");
+				Process clearLog= Runtime.getRuntime().exec("logcat -b radio -c");
+				sleep((long) 1000);
+				Process startSms= Runtime.getRuntime().exec("am start -a android.intent.action.SENDTO -d sms:" + 
+						getParameterInt("Stability","SmsTest","smsNum") + " --es sms_body " + getParameterStr("Stability","SmsTest","details"));
+				sleep((long) 3000);
+				UiObject SendButton = new UiObject(new UiSelector().
+						className("android.widget.Button").index(0).instance(1));
+				UiObject SendButton1 = new UiObject(new UiSelector().
+						className("android.widget.Button").index(0).instance(3));
+				if (SendButton1.exists()) {
+					SendButton1.click();
+				}else {
+					SendButton.click();
+				}
+				sleep((long) 10000);
+				String[] cmd = new String[]{"/system/bin/sh","-c","logcat -b radio -t 2000 | grep -i mErrorCode"};
+				String matchesString = "mErrorCode";
+				int time = 60;
+				if(logCheck(cmd ,matchesString ,time) == true){
+					File logcatFile1=new File("/sdcard/Satibiility/Pass_Smstest.txt");
+					logcatFile1.createNewFile();
+					FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+					String Smstest = "SmsMotest Pass "+i+"th";
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+					sleep((long) getParameterInt("Stability","SmsTest","looptime"));
+				}else{
+					File logcatFile1=new File("/sdcard/Satibiility/Fail_Smstest.txt");
+					logcatFile1.createNewFile();
+					FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+					String Smstest = "SmsMotest fail "+i;
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+					sleep((long) getParameterInt("Stability","SmsTest","looptime"));
+				}
+				RunCommand("am force-stop com.android.mms");
+			}
+		}catch(Exception e) {
+			// TODO Auto-generated catch block
+			try {
+				//调用System.setErr()方法，将out流写入文件，因为printStackTrace是把消息输出到System.err的，所以要只要重定向System.err即可
+				//如果不重新定向，e.printStackTrace()只作为cmd端口输出
+				//然后根据文件的路径可以编辑文件保存的路径和文件截图的名字，下面是以时间命名的
+				System.setErr(new PrintStream(new File("/sdcard/"+getTime("HH_mm_ss")+".txt")));
+				e.printStackTrace();
+				e.getMessage();
+				UiDevice.getInstance().takeScreenshot(new File("/sdcard/"+getTime("HH_mm_ss")+".png"));
+				
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				//try catch中可以嵌套多个try catch
+				//这个catch 是为了避免重定义System.setErr()方法的时候找不到文件。
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public void AirPlane(){
+		try{
+			CrashBug();
+			Process startSetting = Runtime.getRuntime().exec("am start -n com.android.settings/.MiuiSettings");
+			sleep((long) 2000.0);
+			UiObject allsteView = new UiObject(new UiSelector().text("全部设置"));
+			allsteView.clickAndWaitForNewWindow();
+			sleep((long) 2000.0);
+			Process mkdir = Runtime.getRuntime().exec("mkdir /sdcard/Satibiility");
+			sleep((long) 1000.0);
+			for(i = 1 ; i <= getParameterInt("Stability","Airplane","loop")*2 ; i++){
+			CrashBug();
+			Process p = Runtime.getRuntime().exec("logcat -b radio -c");
+			sleep((long) 1000.0);
+			UiObject SendButton = new UiObject(new UiSelector().
+					className("android.widget.CheckBox").index(0).instance(0));
+			SendButton.click();
+			sleep((long) 10000.0);
+			if(i%2 != 0)
+			{
+
+				while(result1 == -1 && j <= 60)
+				{
+					Process getLogcat1 = Runtime.getRuntime().exec(new String[]{"/system/bin/sh","-c","logcat -b radio -t 20000 | grep -i showPlmn"});
+					InputStream is = getLogcat1.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+					String line;
+					String Log="";
+					while ((line = reader.readLine()) != null){
+						Log = Log+line+"\n";
+					}
+					sleep((long) 1000.0);
+					result1=Log.indexOf("changed sending intent rule=3 showPlmn='false' plmn='null'");
+					sleep((long) 2000.0);
+					j++;
+				}
+				if(j == 60){
+					File logcatFile1=new File("/sdcard/Satibiility/Fail_OpenAirplane.txt");
+					logcatFile1.createNewFile();
+					FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+					String Smstest = "Airplane fail "+i;
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+					Process clearLog= Runtime.getRuntime().exec("logcat -b radio -c");
+					Log.v(MI3.ACTIVITY_TAG, "Open is timeout------------"+i/2);
+					sleep((long) getParameterInt("Stability","Airplane","looptime"));
+				}
+				else{
+					File logcatFile1=new File("/sdcard/Satibiility/Pass_OpenAirplane.txt");
+					logcatFile1.createNewFile();
+					FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+					String Smstest = "OpenAirplane Pass "+i/2+ "th";
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+					Log.v(MI3.ACTIVITY_TAG, "Open is successfully------------"+i/2);
+					sleep((long) getParameterInt("Stability","Airplane","looptime"));
+				}
+
+			}
+			else
+			{
+				while(result1 == -1 && j <= 60)
+				{
+					Process getLogcat1 = Runtime.getRuntime().exec(new String[]{"/system/bin/sh","-c","logcat -b radio -t 20000 | grep -i showPlmn"});
+					InputStream is = getLogcat1.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+					String line;
+					String Log="";
+					while ((line = reader.readLine()) != null){
+						Log = Log+line+"\n";
+					}
+					sleep((long) 1000.0);
+					result1=Log.indexOf("changed sending intent rule=1 showPlmn='false'");
+					sleep((long) 2000.0);
+					j++;
+				}
+				if(j == 60){
+					File logcatFile1=new File("/sdcard/Satibiility/Fail_CloseAirplane.txt");
+					logcatFile1.createNewFile();
+					FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+					String Smstest = "Airplane fail "+i;
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+					Log.v(MI3.ACTIVITY_TAG, "Close is timeout------------"+i/2);
+					sleep((long) getParameterInt("Stability","Airplane","looptime"));
+				}
+				else{
+					File logcatFile1=new File("/sdcard/Satibiility/Pass_CloseAirplane.txt");
+					logcatFile1.createNewFile();
+					FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+					String Smstest = "CloseAirplane Pass "+i/2+ "th";
+					SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+					outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+					sleep((long) 1000.0);
+					Log.v(MI3.ACTIVITY_TAG, "Close is successfully------------"+i/2);
+					sleep((long) getParameterInt("Stability","Airplane","looptime"));
+				}
+			}
+			}
+		}catch(Exception e) {
+			// TODO Auto-generated catch block
+			try {
+				//调用System.setErr()方法，将out流写入文件，因为printStackTrace是把消息输出到System.err的，所以要只要重定向System.err即可
+				//如果不重新定向，e.printStackTrace()只作为cmd端口输出
+				//然后根据文件的路径可以编辑文件保存的路径和文件截图的名字，下面是以时间命名的
+				System.setErr(new PrintStream(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".txt")));
+				e.printStackTrace();
+				e.getMessage();
+				UiDevice.getInstance().takeScreenshot(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".png"));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				//try catch中可以嵌套多个try catch
+				//这个catch 是为了避免重定义System.setErr()方法的时候找不到文件。
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	@SuppressWarnings({  "unused", "deprecation" })
+	public void DataChange() {
+		try{
+			CrashBug();
+			Process runSetting = Runtime.getRuntime().exec("am start com.android.phone/.MiuiMobileNetworkSettings");
+			sleep((long) 5000.0);
+			UiObject allsteView = new UiObject(new UiSelector().text("网络类型选择"));
+			allsteView.clickAndWaitForNewWindow();
+			UiObject add3App = new UiObject(new UiSelector().text("3G网络优先"));
+			add3App.click();
+			for(int i = 1 ; i <= getParameterInt("Stability","Date","loop")*2; i++)
+			{
+				allsteView.clickAndWaitForNewWindow();
+				sleep((long) 2000.0);
+				Process clearLog= Runtime.getRuntime().exec("logcat -b radio -c");
+				Process mkdir = Runtime.getRuntime().exec("mkdir /sdcard/Satibiility");
+				if(i%2 != 0)
+				{
+					Process getLog1= Runtime.getRuntime().exec("logcat -b radio -c");
+					UiObject add1App = new UiObject(new UiSelector().text("仅使用2G网络(更省电)"));
+					add1App.click();
+					while(result1 == -1 && j <= 150)
+					{
+						Process getLogcat1 = Runtime.getRuntime().exec(new String[]{"/system/bin/sh","-c","logcat -b radio -t 20000| grep -i showPlmn"});
+						InputStream is = getLogcat1.getInputStream();
+						BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+						String line;
+						String Log="";
+						while ((line = reader.readLine()) != null){
+							Log = Log+line+"\n";
+						}
+						sleep((long) 1000.0);
+						result1=Log.indexOf("changed sending intent rule=1 showPlmn='false'");
+						sleep((long) 2000.0);
+					}
+					if(j == 150){
+						File logcatFile1=new File("/sdcard/Satibiility/Fail_GsmDatetest.txt");
+						logcatFile1.createNewFile();
+						FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+						String Smstest = "DateChange fail "+i;
+						SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+						outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+						Log.v(MI3.ACTIVITY_TAG, "Change GSM only is timeout------------"+(i+1)/2);
+						sleep((long) getParameterInt("Stability","Date","looptime"));
+					}
+					else{
+						File logcatFile1=new File("/sdcard/Satibiility/Pass_GsmDatetest.txt");
+						logcatFile1.createNewFile();
+						FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+						String Smstest = "GsmDatetest Pass "+i+ "th";
+						SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+						outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+						Log.v(MI3.ACTIVITY_TAG, "Change GSM only is successfully------------"+(i+1)/2);
+						sleep((long) getParameterInt("Stability","Date","looptime"));
+					}
+	    		}
+				else{
+						Process getLog1= Runtime.getRuntime().exec("logcat -b radio -c");
+						UiObject add1App = new UiObject(new UiSelector()
+						  .text("仅使用3G网络"));
+						add1App.click();
+						UiObject okButton = new UiObject(new UiSelector().text("确定"));
+						if(okButton.exists()){
+							okButton.clickAndWaitForNewWindow();
+						}
+						while(result1 == -1 && j<= 150)
+						{
+							Process getLogcat1 = Runtime.getRuntime().exec(new String[]{"/system/bin/sh","-c","logcat -b radio -t 20000| grep -i showPlmn"});
+							InputStream is = getLogcat1.getInputStream();
+							BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+							String line;
+							String Log="";
+							while ((line = reader.readLine()) != null){
+								Log = Log+line+"\n";
+							}
+							sleep((long) 1000.0);
+							result1=Log.indexOf("changed sending intent rule=1 showPlmn='false'");
+							sleep((long) 2000.0);
+					}
+					if(j == 150){
+						File logcatFile1=new File("/sdcard/Satibiility/Fail_TdDatetest.txt");
+						logcatFile1.createNewFile();
+						FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+						String Smstest = "DateChange fail "+i;
+						SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+						outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+						Log.v(MI3.ACTIVITY_TAG, "Change TD only is timeout------------"+i/2);
+						sleep((long) getParameterInt("Stability","Date","looptime"));
+					}
+					else{
+						File logcatFile1=new File("/sdcard/Satibiility/Pass_TdDatetest.txt");
+						logcatFile1.createNewFile();
+						FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1,true);
+						String Smstest = "TdDatetest Pass "+i+ "th";
+						SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+						outputLogcat1.write((date1.format(new Date())+"---"+Smstest+"\n").getBytes());
+						Log.v(MI3.ACTIVITY_TAG, "Change TD only is successfully------------"+i/2);
+						sleep((long) getParameterInt("Stability","Date","looptime"));
+					}
+				}
+			}
+		}catch(Exception e) {
+			// TODO Auto-generated catch block
+			try {
+				//调用System.setErr()方法，将out流写入文件，因为printStackTrace是把消息输出到System.err的，所以要只要重定向System.err即可
+				//如果不重新定向，e.printStackTrace()只作为cmd端口输出
+				//然后根据文件的路径可以编辑文件保存的路径和文件截图的名字，下面是以时间命名的
+				System.setErr(new PrintStream(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".txt")));
+				e.printStackTrace();
+				e.getMessage();
+				UiDevice.getInstance().takeScreenshot(new File("/sdcard/Satibiility/"+getTime("HH_mm_ss")+".png"));
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				//try catch中可以嵌套多个try catch
+				//这个catch 是为了避免重定义System.setErr()方法的时候找不到文件。
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+	
+	public void CrashBug()
+	{
+		UiWatcher confirmDialogWatcher = new UiWatcher(){
+			@Override
+			public boolean checkForCondition() {
+				UiObject okCancelDialog = new UiObject(new UiSelector().text("取消"));
+				if(okCancelDialog.exists()){
+					try {	
+						Process p1 = Runtime.getRuntime().exec("mkdir /sdcard/Satibiility ");
+						SimpleDateFormat date1 = new SimpleDateFormat("HHmm");
+						Process p2 = Runtime.getRuntime().exec("screencap -p /sdcard/Satibiility/" + date1.format(new Date()) + ".png");
+						 sleep((long) 1000.0);
+						okCancelDialog.click();
+						 sleep((long) 1000.0);
+						/*GetLog getLog = new GetLog();
+						getLog.getBugreportLog();*/
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				return false;
+			}
+			
+		};
+		
+		UiDevice.getInstance().registerWatcher("UIWATCHER", confirmDialogWatcher);
+		UiDevice.getInstance().runWatchers();
+	}
+
+	public void Alarm() throws UiObjectNotFoundException, IOException, RemoteException{
+		for(int i = 1 ; i < 350 ; i++)
+		{
+			Process runSmsMo = Runtime.getRuntime().exec("am start com.android.deskclock/.DeskClockTabActivity");
+			sleep((long) 5000.0);
+			UiObject AlarmButton = new UiObject(new UiSelector().text("添加闹钟"));
+			AlarmButton.clickAndWaitForNewWindow();
+			SimpleDateFormat date1 = new SimpleDateFormat("ss");
+			SimpleDateFormat date2 = new SimpleDateFormat("mm");
+			int ss = Integer.parseInt(date1.format(new Date()), 10);
+			int mm = Integer.parseInt(date2.format(new Date()), 10);
+			int num = 60-ss;
+			UiObject Set1Button = new UiObject(new UiSelector().
+		    		   className("android.widget.Button").index(2).instance(2));
+			UiObject Set2Button = new UiObject(new UiSelector().
+		    		   className("android.widget.Button").index(2).instance(1));
+			if(mm <= 59 && mm >= 56){
+				Set2Button.click();
+				for(int j = 0 ; j < 3 ; j++){
+					Set1Button.click();
+					
+			}
+			}else{
+				for(int j = 0 ; j < 3 ; j++){
+					Set1Button.click();
+					/*sleep((long) 1000.0);*/
+				}
+			}
+			
+			UiObject OkButton = new UiObject(new UiSelector().text("确定"));
+			OkButton.click();
+			UiDevice.getInstance().pressHome();
+			UiObject alarmAlert = new UiObject(new UiSelector().packageName("com.android.deskclock").
+		    		   className("android.view.View").index(0));
+			WaitFor(alarmAlert,(150+num));
+			/*sleep((long) 10000.0);
+			sleep((long) ((240+num)*1000));
+			UiDevice.getInstance().sleep();
+			sleep((long) ((240+num)*1000.0));*/
+			sleep((long) 2000.0);
+			Process p2 = Runtime.getRuntime().exec("screencap -p /sdcard/" + i + ".png");
+			sleep((long) 3000.0);
+			UiDevice.getInstance().swipe(215, 1717, 910, 1717, 10);
+			sleep((long) 10000.0);
+			Process closeGmae = Runtime.getRuntime().exec("am force-stop com.android.deskclock");
+			sleep((long) 5000.0);
+		
+		}
+	}
+
+	
+	public void WaitFor(UiObject uiObject,int tiemout) throws UiObjectNotFoundException, IOException{
+		int i=0;
+		while(!uiObject.exists() && (i < tiemout)){
+			sleep((long) 1000.0);
+			i++;
+			Log.v(MI3.ACTIVITY_TAG, "signal-------"+i);
+		
+		}
+		Log.v(MI3.ACTIVITY_TAG, "signalxxxxxxxx-------1");
+	}
+	
+	static class cameraTest{
+		public void StartCamera(){
+			
+			try {
+				Process StartCamera = Runtime.getRuntime().exec("am start com.android.camera/.Camera");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		public void BackPhotograph()throws UiObjectNotFoundException{
+
+			try {
+				SystemClock.sleep((long) 
+				getParameterInt("Stability","Camera","BackPhotograph"));
+				UiObject Photograp = new UiObject(new UiSelector()
+		        .description("“快门”按钮"));
+				if(Photograp.exists()){
+					Photograp.click();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		public void AheadPhotograph()throws UiObjectNotFoundException{
+
+			try {
+				SystemClock.sleep((long) 
+				getParameterInt("Stability","Camera","AheadPhotograph"));
+				UiObject ChangePhotograp = new UiObject(new UiSelector()
+		        .description("前视和后视相机开关"));
+				if(ChangePhotograp.exists()){
+					ChangePhotograp.clickAndWaitForNewWindow();
+				}
+				SystemClock.sleep((long) 1000);
+				UiObject Photograp = new UiObject(new UiSelector()
+		        .description("“快门”按钮"));
+				if(Photograp.exists()){
+					Photograp.clickAndWaitForNewWindow();
+				}
+				SystemClock.sleep((long) 1000);
+				if(ChangePhotograp.exists()){
+					ChangePhotograp.clickAndWaitForNewWindow();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
+		}
+		public void BackVideo() throws UiObjectNotFoundException {
+
+			try {
+				SystemClock.sleep((long) getParameterInt("Stability","Camera","BackVideo"));
+				UiObject ChangePhotograp1 = new UiObject(new UiSelector().
+						className("android.widget.ImageView").index(0).instance(1));
+				if(ChangePhotograp1.exists()){
+					ChangePhotograp1.clickAndWaitForNewWindow();
+				}
+				UiObject Photograp = new UiObject(new UiSelector()
+		        .description("“快门”按钮"));
+				if(Photograp.exists()){
+					Photograp.clickAndWaitForNewWindow();
+					SystemClock.sleep((long) getParameterInt("Stability","Camera","BackVideo1"));	
+					Photograp.clickAndWaitForNewWindow();
+				}
+				UiObject ChangePhotograp = new UiObject(new UiSelector().
+						className("android.widget.ImageView").index(1));
+				if(ChangePhotograp.exists()){
+					ChangePhotograp.clickAndWaitForNewWindow();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
+		}
+		public void AheadVideo() throws UiObjectNotFoundException {
+
+			try {
+				SystemClock.sleep((long) getParameterInt("Stability","Camera","AheadVideo"));
+				UiObject Change_Photograp = new UiObject(new UiSelector()
+		        .description("前视和后视相机开关"));
+				if(Change_Photograp.exists()){
+					Change_Photograp.clickAndWaitForNewWindow();
+				}
+				UiObject ChangePhotograp1 = new UiObject(new UiSelector().
+						className("android.widget.ImageView").index(0).instance(1));
+				if(ChangePhotograp1.exists()){
+					ChangePhotograp1.clickAndWaitForNewWindow();
+				}
+				UiObject Photograp = new UiObject(new UiSelector()
+		        .description("“快门”按钮"));
+				if(Photograp.exists()){
+					Photograp.clickAndWaitForNewWindow();
+					SystemClock.sleep((long) getParameterInt("Stability","Camera","AheadVideo1"));	
+					Photograp.clickAndWaitForNewWindow();
+				}
+				SystemClock.sleep((long) 1000);
+				UiObject ChangePhotograp = new UiObject(new UiSelector().
+						className("android.widget.ImageView").index(1));
+				if(ChangePhotograp.exists()){
+					ChangePhotograp.clickAndWaitForNewWindow();
+					Change_Photograp.clickAndWaitForNewWindow();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		public void CloseCamera() {
+			try {
+				Process closeGmae = Runtime.getRuntime().exec("am force-stop com.android.camera/.Camera");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	abstract class wifiCheck{
+		public void openWifi() throws Exception{
+			String[] args = {"/system/bin/sh","-c","dumpsys wifi | grep Wi-Fi"};
+			String matchesString = "(.*)Wi-Fi is enabled(.*)";
+			if(logCheck(args,matchesString,10000) == true){
+				System.out.println("Wi-Fi is enabled !");
+			}else{
+				RunCommand("am start com.android.settings/.MiuiSettings");
+				UiObject wifiView = new UiObject(new UiSelector().text("WLAN"));
+				wifiView.clickAndWaitForNewWindow();
+				UiObject endButton = new UiObject(new UiSelector().
+						className("android.widget.CheckBox").index(0));
+				if(endButton.exists() && endButton.isEnabled())endButton.click();
+				
+			}
+		}
+		
+		public void closeWifi() throws Exception{
+			String[] args = {"/system/bin/sh","-c","dumpsys wifi | grep Wi-Fi"};
+			String matchesString = "(.*)Wi-Fi is disabled(.*)";
+			if(logCheck(args,matchesString,10000) == true){
+				System.out.println("Wi-Fi is disabled !");
+			}else{
+				RunCommand("am start com.android.settings/.MiuiSettings");
+				UiObject wifiView = new UiObject(new UiSelector().text("WLAN"));
+				wifiView.clickAndWaitForNewWindow();
+				UiObject endButton = new UiObject(new UiSelector().
+						className("android.widget.CheckBox").index(0));
+				if(endButton.exists() && endButton.isEnabled())endButton.click();
+				
+			}
+		}
+		
+		public void connectedWifi(String wifiname,String username, String password) throws Exception{
+			UiScrollable findWifiViews = new UiScrollable(new UiSelector().scrollable(true));
+			UiObject settingsApp = findWifiViews.getChildByText(new UiSelector()
+			.className(android.widget.TextView.class.getName()), wifiname);
+			if(settingsApp.exists())settingsApp.click();
+			UiObject usernameView = new UiObject(new UiSelector().className("android.widget.EditText").index(1));
+			if(usernameView.exists()&&usernameView.isEnabled())usernameView.setText(username);
+			UiObject passwordView = new UiObject(new UiSelector().className("android.widget.EditText").index(1));
+			if(passwordView.exists()&&passwordView.isEnabled())passwordView.setText(password);
+			UiObject connectedButton = new UiObject(new UiSelector().text("连接"));
+			if(connectedButton.exists()&&connectedButton.isEnabled())connectedButton.click();
+			
+			
+		}
+	}
+	
+	public boolean logCheck(String[] args,String matchesString, int time_out) throws Exception{
+		//String[] log= {"/system/bin/sh","-c","logcat -t 1000|grep -i Camera|grep Sharpness"}
+		//String regex="(.*)Sharpness = 0(.*)"
+		boolean result = true;
+		int time = 1;
+		int result1 = -1;
+		while(result1 == -1 && time <= time_out)
+		{
+			Process p=Runtime.getRuntime().exec(args);
+			InputStream is = p.getInputStream();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+			String strLine;
+			String Log="";
+			while((strLine=reader.readLine()) != null){
+				Log = Log+strLine+"\n";
+			}
+			result1=Log.indexOf(matchesString);
+			time++;
+			sleep((long) 1000.0);
+		}if(time <= time_out){
+			result=true;
+		}else{
+			result = false;
+		}
+		return result;
+	}
+	
+	/*public exception()*/
+	
+}

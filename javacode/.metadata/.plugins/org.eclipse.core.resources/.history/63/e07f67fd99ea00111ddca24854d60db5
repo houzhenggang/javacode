@@ -1,0 +1,34 @@
+package com.example.helloworld;
+
+
+import android.os.Bundle;
+
+import android.app.Activity;
+import android.view.Menu;
+import android.widget.CheckBox;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+
+public class MainActivity extends Activity {
+	
+	private RadioGroup genderGroup = null;
+	private RadioButton femaleButton = null;
+	private RadioButton maleButton = null;
+	private CheckBox swimBox = null;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        genderGroup = (RadioGroup)findViewById(R.id.femaleButton);
+        femaleButton = (RadioButton)findViewById(R.id.femaleButton);
+        maleButton = (RadioButton)findViewById(R.id.maleButton);
+        swimBox = (CheckBox)findViewById(R.id.swim);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+}

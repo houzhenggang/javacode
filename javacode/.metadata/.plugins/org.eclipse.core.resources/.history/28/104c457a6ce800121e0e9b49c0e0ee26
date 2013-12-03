@@ -1,0 +1,74 @@
+package Bsptest;
+import java.io.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import android.os.RemoteException;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+
+
+
+
+public class MoCall extends UiAutomatorTestCase
+{	
+	@SuppressWarnings({ "unused" })
+	public void test1PlayGame() throws IOException, UiObjectNotFoundException, RemoteException, ParserConfigurationException, SAXException
+	{	
+		for(int i = 0; i < 500;i++)
+		{
+		DocumentBuilderFactory factory1 = DocumentBuilderFactory.newInstance();
+	    DocumentBuilder builder1 = factory1.newDocumentBuilder();
+	    Document readXml = builder1.parse(new File("/sdcard/string.xml"));
+	    Element element_loop = readXml.getDocumentElement();
+	    NodeList list_loop = element_loop.getElementsByTagName("callNum");
+	    Element element_loopnum = (Element) list_loop.item(0);
+	    String Callnum = element_loopnum.getChildNodes().item(0).getNodeValue();
+		Process startCall= Runtime.getRuntime().exec("am start -a android.intent.action.CALL -d tel:"+Callnum);	
+		UiScrollable appViews = new UiScrollable(new UiSelector()
+        .scrollable(true));
+		UiObject moreApp = appViews.getChildByText(new UiSelector()
+        .className(android.widget.TextView.class.getName()), 
+        "0:02");
+		moreApp.waitForExists((long) 60000.0);
+		UiObject waitApp = new UiObject(new UiSelector().text("0:32"));
+		waitApp.waitForExists((long) 60000.0);
+		if(waitApp.exists()||moreApp.exists())
+		{
+			UiObject endButton = new UiObject(new UiSelector().
+		    		   className("android.widget.ImageButton").index(0));
+			if(endButton.exists()){
+				endButton.click();
+			}
+
+			sleep((long) 20000.0);
+		}else
+		{
+			UiObject endButton = new UiObject(new UiSelector().
+		    		   className("android.widget.ImageButton").index(0));
+			if(endButton.exists()){
+				endButton.click();
+			}
+			sleep((long) 3000.0);
+			GetLog getlog =new GetLog();
+			getlog.getModemLog();
+			sleep((long) 2000.0);
+			getlog.getBugreportLog();
+			sleep((long) 20000.0);
+		}
+	    
+	
+		}
+		
+	}
+
+
+}
+

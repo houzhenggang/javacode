@@ -1,0 +1,195 @@
+package com.test;
+
+import java.io.IOException;
+
+import java.util.List;
+import java.util.Locale;
+
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+
+import com.google.android.maps.Overlay;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class TestGPS4Activity extends MapActivity {
+	private TextView tv;
+
+	private MapView mapView;
+	private GeoPoint gp;
+	private MapController mc;
+	private MyLocationOverlay myposition;
+	private Location location;
+
+	double lat;
+	double lng;
+
+	// 定位服务管理器实例
+	private LocationManager locationManager;
+
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		// 设置当前Activity的界面布局
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		// 定位服务常量
+		String locService = Context.LOCATION_SERVICE;
+		// 通过getSystemService方法获得LocationManager实例
+		locationManager = (LocationManager) getSystemService(locService);
+		location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+		tv = (TextView) findViewById(R.id.myTextView1);
+		mapView = (MapView) findViewById(R.id.map_view);
+		//显示坐标位置
+		reverse();
+		
+		//<><>><><<<><><><><><><><><><><>
+		lat = location.getLatitude() * 1E6;
+		lng = location.getLongitude() * 1E6;
+		gp = new GeoPoint((int) lat, (int) lng);
+		mc = mapView.getController();
+		mc.animateTo(gp);
+		mc.setZoom(16);
+		mapView.setStreetView(ture);
+		mapView.setEnabled(true);
+		mapView.setBuiltInZoomControls(true);
+		myposition = new MyLocationOverlay();
+		myposition.setLocation(location);
+		List<Overlay> over = mapView.getOverlays();
+		over.add(myposition);
+		//<><><><><><<><><><><><><<><><<><><><>>
+
+	}
+
+	class MyLocationOverlay extends Overlay {
+		Location mlocation;
+
+		public void setLocation(Location location) {
+			mlocation = location;
+		}
+
+		public boolean draw(Canvas canvas, MapView mapView, boolean shadow,
+				long w) {
+			super.draw(canvas, mapView, shadow);
+			Paint paint = new Paint();
+			Point myScreenCoords = new Point();
+//			double lat1 = mlocation.getLatitude()*1E6;
+//			double lng1 = mlocation.getLongitude()*1E6;
+			GeoPoint geopoint = new GeoPoint((int)lat,(int)lng);
+			mapView.getProjection().toPixels(geopoint, myScreenCoords);
+			mc.animateTo(geopoint);
+
+			Bitmap bmp = BitmapFactory.decodeResource(getResources(),
+					R.drawable.ic_launcher);
+			canvas.drawBitmap(bmp, myScreenCoords.x, myScreenCoords.y, paint);
+			canvas.drawText("当前位置", myScreenCoords.x, myScreenCoords.y, paint);
+			tv.setText("lat:"+lat+"lng:"+lng);
+			// 实例化Geocoder
+			
+			
+			return true;
+
+		}
+	}
+
+	// 反向编码
+	private void reverse() {
+	Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+		if (location != null) {
+			// 纬度
+			double lng = location.getLongitude();
+			// 经度
+			double lat = location.getLatitude();
+			// 实例化Geocoder
+			Geocoder gc = new Geocoder(TestGPS4Activity.this,Locale.getDefault());
+			// 声明地址列表
+			
+		
+				// 获得Address实例列表
+				try {
+					List<Address> addresses = gc.getFromLocation(lat, lng, 1);
+				
+				if(addresses.size()!=0){
+				// 声明StringBuilder保存位置信息
+				StringBuilder sb = new StringBuilder();
+				// 判断addresses是否为空
+				if (addresses.size() > 0) {
+					// 获得地址
+					Address a = addresses.get(0);
+					
+					for (int i = 0; i < a.getMaxAddressLineIndex(); i++) {
+						// 地址
+						sb.append(a.getAddressLine(i)).append("\n");
+					}
+					// 地点
+
+					sb.append(a.getLocality()).append("\n");
+					// 邮编
+					sb.append(a.getPostalCode()).append("\n");
+					// 国家
+					sb.append(a.getCountryName()).append("\n");
+					sb.append("lat:" + lat + "lng" + lng);
+
+					tv.setText(sb.toString());
+				}
+				}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		} else {
+			Toast.makeText(this, " kongzhizheng", Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	// 正向编码
+	// private void forward(){
+	// //实力哈Geocoder
+	// Geocoder gc = new Geocoder(this,Locale.getDefault());
+	// //地址
+	// String address = " 烟台";
+	// System.out.println("<><><><><><><<<><><><><>");
+	// //位置列表
+	// List<Address> locations = null;
+	// try{
+	// //获得位置类别
+	// locations = gc.getFromLocationName(address, 5);
+	// //如果Location不为空
+	// if(locations.size()>0){
+	// //获得Address实例
+	// Address a = locations.get(0);
+	// //获得经纬度
+	// double lat = a.getLatitude();
+	// double lng = a.getLongitude();
+	// //显示信息
+	// tv.setText(lat+":"+lng);
+	// }
+	// }catch(IOException e){
+	//
+	// }
+	// }
+
+}

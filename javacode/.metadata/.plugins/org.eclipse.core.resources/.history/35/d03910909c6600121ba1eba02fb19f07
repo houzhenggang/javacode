@@ -1,0 +1,143 @@
+package bsptest;
+
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import android.os.RemoteException;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class Wifi extends UiAutomatorTestCase {   
+		
+		@SuppressWarnings("unused")
+		protected void setUp() throws UiObjectNotFoundException, RemoteException, IOException {
+			getUiDevice().sleep();
+		    sleep((long) 2000.0);
+		    getUiDevice().wakeUp();
+		    sleep((long) 1000.0);
+		    Process r1 = Runtime.getRuntime().exec("sendevent /dev/input/event5 1 115 1");
+		    Process r2 = Runtime.getRuntime().exec("sendevent /dev/input/event5 0 0 0");
+		    Process r3 = Runtime.getRuntime().exec("sendevent /dev/input/event0 1 158 1");
+		    Process r4 = Runtime.getRuntime().exec("sendevent /dev/input/event0 0 0 0");
+		    Process r5 = Runtime.getRuntime().exec("sendevent /dev/input/event5 1 115 0");
+		    Process r6 = Runtime.getRuntime().exec("sendevent /dev/input/event5 0 0 0");
+		    Process r7 = Runtime.getRuntime().exec("sendevent /dev/input/event0 1 158 0");
+		    Process r8 = Runtime.getRuntime().exec("sendevent /dev/input/event0 0 0 0");
+		    sleep((long) 2000.0);		
+			}
+		
+		protected void tearDown() throws UiObjectNotFoundException, RemoteException, IOException { 
+			getUiDevice().sleep();
+		    sleep((long) 2000.0);
+			}
+		
+		@SuppressWarnings({ "unused", "deprecation" })
+		public void test() throws UiObjectNotFoundException, RemoteException, IOException, ParserConfigurationException, SAXException{
+			File newFile1=new File("/sdcard/MIUI/open_fail_list.text");
+			newFile1.createNewFile();
+			FileOutputStream fo=new FileOutputStream(newFile1);
+			File newFile2=new File("/sdcard/MIUI/close_fail_list.text");
+			newFile1.createNewFile();
+			FileOutputStream fo1=new FileOutputStream(newFile2);
+			/*DocumentBuilderFactory factory1 = DocumentBuilderFactory
+		    	     .newInstance();
+		    DocumentBuilder builder1 = factory1.newDocumentBuilder();
+		    Document document1 = builder1.parse(new File("/sdcard/MIUI/string.xml"));
+		    Element rootElement1 = document1.getDocumentElement();
+		    NodeList list2 = rootElement1.getElementsByTagName("loopnum");
+		    Element element2 = (Element) list2.item(0);
+		    String str6;
+		    str6 = element2.getChildNodes().item(0).getNodeValue();
+		    int aa = Integer.parseInt(str6, 10);*/
+			for(int i = 0 ; i < 10 ; i++){
+				Process p1 = Runtime.getRuntime().exec("am start -n com.android.settings/.MiuiSettings");
+				sleep((long) 1000.0);
+				UiObject allsteView = new UiObject(new UiSelector().text("全部设置"));
+				allsteView.clickAndWaitForNewWindow();
+				sleep((long) 1000.0);
+				UiObject wifiView = new UiObject(new UiSelector().text("WLAN"));
+				wifiView.clickAndWaitForNewWindow();				
+				sleep((long) 2000.0);
+				getUiDevice().click(633,100);
+				sleep((long) 15000.0);
+				String stra;
+				Process p2 = Runtime.getRuntime().exec("dumpsys wifi |busybox grep curState= ");
+			    DataInputStream p4 = new DataInputStream(p2.getInputStream());
+			    stra = p4.readLine();
+			    System.out.println(stra);
+			    System.out.println(p4);
+
+				String straa = "Wi-Fi is enabled";
+				if(stra.equals(straa)){
+					System.out.println("Wifi is open successfully!");
+					sleep((long) 2000.0);
+					getUiDevice().pressHome();
+					Process p3 = Runtime.getRuntime().exec("am start -n com.android.settings/.MiuiSettings");
+					sleep((long) 3000.0);
+					UiObject azllsteView = new UiObject(new UiSelector().text("全部设置"));
+					azllsteView.clickAndWaitForNewWindow();
+					sleep((long) 2000.0);
+					UiObject aallsteView = new UiObject(new UiSelector().text("WLAN"));
+					aallsteView.clickAndWaitForNewWindow();				
+					sleep((long) 2000.0);
+					getUiDevice().click(633,100);
+					sleep((long) 10000.0);
+					String straaa;
+					Process p11 = Runtime.getRuntime().exec("dumpsys wifi |busybox grep curState= ");
+				    DataInputStream p12 = new DataInputStream(p11.getInputStream());
+				    straaa = p12.readLine();
+				    System.out.println(straaa);
+				    System.out.println(p12);
+
+				    String stra1 = "curState=DriverUnloadedState";
+					if(p12.equals(stra1)){
+						System.out.println("Wifi is close successfully!");
+						sleep((long) 2000.0);
+						getUiDevice().pressHome();
+						
+						}
+					else{
+						String str11 = new String();
+						String fail= "call is fail " + i+ "\n";
+						System.out.println("Wifi is close successfully!");
+						fo1.write((fail+"  \n").getBytes());
+						sleep((long) 10000.0);
+						getUiDevice().pressHome();
+						File newFile=new File("/sdcard/MIUI/close_fail" + i + ".txt");
+						newFile.createNewFile();
+						FileOutputStream fo1s=new FileOutputStream(newFile);
+						Process p21 = Runtime.getRuntime().exec("logcat -t 600");
+						DataInputStream p5 = new DataInputStream(p3.getInputStream());
+						while ((str11 = p5.readLine()) != null){
+							fo1s.write((str11+"  \n").getBytes());
+						}
+						}
+					
+					}
+				else{
+					String str1 = new String();
+					String fail= "call is fail " + i+ "\n";
+					System.out.println("Wifi is open fail!");
+					fo.write((fail+"  \n").getBytes());
+					sleep((long) 1000.0);
+					getUiDevice().pressHome();
+					File newFile=new File("/sdcard/MIUI/open_fail" + i + ".txt");
+					newFile.createNewFile();
+					FileOutputStream fos=new FileOutputStream(newFile);
+					Process p3 = Runtime.getRuntime().exec("logcat -t 600");
+					DataInputStream p5 = new DataInputStream(p3.getInputStream());
+					while ((str1 = p5.readLine()) != null){
+						fos.write((str1+"  \n").getBytes());
+					}
+					}   
+				}
+
+		}
+	
+		
+}

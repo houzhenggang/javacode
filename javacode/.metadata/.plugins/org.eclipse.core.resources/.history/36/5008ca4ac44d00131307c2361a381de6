@@ -1,0 +1,483 @@
+package bsptest.powertest;
+
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+import android.os.RemoteException;
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.core.UiWatcher;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class Android extends UiAutomatorTestCase implements IPowerTest
+{
+	private Element root;
+	private Element title;
+	private Document document;
+	private String logcat;
+	private String[] addAttribute;
+	//生成xml的路径
+	private String filename = "/sdcard/result.xml";
+	static String[] a =new String[9];
+	static String getClazzName = Thread.currentThread().getStackTrace()[0].getClassName();
+	static String getMethodName = Thread.currentThread().getStackTrace()[0].getMethodName();
+	private int x = 0;
+	private void RunCommand(String shellCommand){
+		try {
+			Runtime.getRuntime().exec(shellCommand);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@SuppressWarnings("unused")
+	protected void setUp() throws UiObjectNotFoundException, RemoteException, IOException 
+	{
+		UiDevice.getInstance().pressHome();
+		sleep((long) 1000.0);
+		RunCommand(" am Kill all background processes.");
+		sleep((long) 1000.0);    
+	}
+	
+
+	@SuppressWarnings("unused")
+	protected void tearDown() throws UiObjectNotFoundException, RemoteException, IOException 
+	{ 
+		UiDevice.getInstance().pressHome();
+		sleep((long) 1000.0);
+		RunCommand(" am Kill all background processes.");
+		sleep((long) 1000.0);  
+	}
+	
+	public String getPower() throws IOException
+    {
+		Process p = Runtime.getRuntime().exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+		InputStream is = p.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+		String line = reader.readLine();
+		is.close();
+		reader.close();
+		p.destroy();
+		return line;
+    }
+	
+	@SuppressWarnings({ "unused", "deprecation" })
+	public void PlayGame() throws IOException, UiObjectNotFoundException, RemoteException
+	{
+		a[0] = getPower();
+		RunCommand("am start com.halfbrick.fruitninja/com.halfbrick.mortar.MortarGameActivity");
+		sleep((long) 15000.0);
+		UiDevice.getInstance().swipe(700, 850, 1100, 600, 5);
+		sleep((long) 10000.0);
+		UiDevice.getInstance().swipe(1050, 940, 1400, 650, 5);
+		sleep((long) 2000.0);
+		for(int i = 0; i < 19;i++)
+		{
+			for(int j = 0; j < 25;j++)
+			{
+				UiDevice.getInstance().swipe(80, 400, 1700, 400, 10);
+				sleep((long) 2000.0);
+			}
+			sleep((long) 21000.0);
+			UiObject backButton = new UiObject(new UiSelector().
+		    		   className("android.widget.ImageButton").index(1));
+			if(backButton.exists())
+        	{
+        		backButton.click();
+        	}
+        	sleep((long) 10000);
+        	UiObject skipButton = new UiObject(new UiSelector().
+		    		   className("android.widget.Button").text("跳过"));
+        	if(skipButton.exists())
+        	{
+        		skipButton.click();
+        	}		
+			sleep((long) 10000.0);
+			UiDevice.getInstance().swipe(700, 870, 1130, 790, 3);
+			sleep((long) 2000.0);
+		}
+		RunCommand("am force-stop com.halfbrick.fruitninja");
+		sleep((long) 5000.0);
+		a[1] = getPower();
+	}
+
+
+	@SuppressWarnings({ "unused", "deprecation" })
+	public void Music() throws UiObjectNotFoundException,  RemoteException, Throwable
+	{	
+		RunCommand("am start com.android.music/.MusicBrowserActivity");
+		sleep((long) 14000.0);
+		UiObject playView = new UiObject(new UiSelector().text("歌曲"));
+		playView.clickAndWaitForNewWindow();
+		sleep((long) 2000.0);
+		UiObject play_allView = new UiObject(new UiSelector().resourceId("com.android.music:id/line1"));
+		play_allView.clickAndWaitForNewWindow();
+		sleep((long) 2000.0);
+		UiDevice.getInstance().sleep();
+		/*sleep((long) 3550000.0);*/
+		sleep((long) 10000.0);
+		UiDevice.getInstance().wakeUp();
+		sleep((long) 2000.0);
+		Util util = new Util();
+		util.AndroidUnlockMi2();
+		sleep((long) 5000.0);
+		RunCommand("am force-stop com.android.music");
+		sleep((long) 5000.0);
+		a[2] = getPower();
+	}
+	
+	@SuppressWarnings({ "unused", "deprecation" })
+	public void Video() throws UiObjectNotFoundException, IOException, RemoteException
+	{
+		Process openFileManager= Runtime.getRuntime().exec("am start com.android.fileexplorer/.FileExplorerTabActivity");
+		sleep((long) 5000.0);
+		UiObject phoneView = new UiObject(new UiSelector().text("手机"));
+		phoneView.clickAndWaitForNewWindow();
+		sleep((long) 2000.0);
+		UiObject folderView = new UiObject(new UiSelector().text("Alarms"));
+		folderView.clickAndWaitForNewWindow();
+		sleep((long) 2000.0);
+		UiObject videoView = new UiObject(new UiSelector().text("test.mp4"));
+		videoView.clickAndWaitForNewWindow();
+		sleep((long) 1770000.0);
+		Process closeVideoPlayer = Runtime.getRuntime().exec("am force-stop com.miui.videoplayer");
+		sleep((long) 5000.0);
+		Process closeFileManager = Runtime.getRuntime().exec("am force-stop com.android.fileexplorer");
+		sleep((long) 5000.0);
+		Process getPower_end = Runtime.getRuntime().exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+		sleep((long) 5000.0);
+		a[3] = getPower();
+	}
+	
+	@SuppressWarnings({ "unused", "deprecation" })
+	public void ReadBook() throws IOException, UiObjectNotFoundException
+	{
+		Process openReader= Runtime.getRuntime().exec("am start com.duokan.reader/.DkReaderActivity");
+		sleep((long) 10000.0);
+		UiObject booknameView = new UiObject(new UiSelector().text("小时代3.0：刺金时代（节选）"));
+		booknameView.clickAndWaitForNewWindow();
+		sleep((long) 5000.0);
+		for(int i = 0; i < 59;i++)
+		{
+			UiDevice.getInstance().click(900,1500);
+			sleep((long) 30000.0);
+		}
+		sleep((long) 5000.0);
+		Process closeVideoPlayer = Runtime.getRuntime().exec("am force-stop com.duokan.reader");
+		sleep((long) 5000.0);
+		Process getPower_end = Runtime.getRuntime().exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+		sleep((long) 5000.0);
+		a[4] = getPower();
+	}
+
+	@SuppressWarnings({ "unused", "deprecation" })
+	public void Weibo() throws IOException, UiObjectNotFoundException
+	{/*
+		Process openWeibo= Runtime.getRuntime().exec("am start com.sina.weibo/.SplashActivity");
+		sleep((long) 5000.0);
+		for(int i = 0; i < 143;i++)
+		{
+			UiObject buttonView = new UiObject(new UiSelector().text("随便看看"));
+			buttonView.clickAndWaitForNewWindow();
+			sleep((long) 10000.0);
+			UiDevice.getInstance().swipe(20, 1700, 20, 500, 10);
+			sleep((long) 5000.0);
+			UiDevice.getInstance().swipe(20, 1700, 20, 500, 10);
+			sleep((long) 5000.0);
+			UiDevice.getInstance().swipe(20, 1700, 20, 500, 10);
+			sleep((long) 5000.0);
+			UiDevice.getInstance().pressBack();
+		}
+		sleep((long) 5000.0);
+		Process closeWeibo = Runtime.getRuntime().exec("am force-stop com.sina.weibo ");
+		sleep((long) 5000.0);
+		Process getPower_end = Runtime.getRuntime().exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+		sleep((long) 5000.0);*/
+		a[5] = getPower();
+		int j = 1;
+		int z = 1;
+		while((getMethodName).equals("getThreadStackTrace") || (getMethodName).equals("getStackTrace")){
+			getMethodName = Thread.currentThread().getStackTrace()[j].getMethodName();
+			j++;
+		}
+		while((getClazzName).equals("dalvik.system.VMStack") || (getClazzName).equals("java.lang.Thread")){
+			getClazzName = Thread.currentThread().getStackTrace()[z].getClassName();
+			z++;
+		}
+		try {
+			addAttribute =new String[]{"asdf","asdfasf =aa","adfasdfasdf =aa"};
+			toWrite("ok","ok","ok","ok","ok","ok");
+			addAttribute =new String[]{"asdf = aa","asdfasf =aa","adfasdfasdf =aa","adfasdfasdf =mm"};
+			toWrite("fail","ok","ok","ok","ok","ok","ok");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	@SuppressWarnings({ "unused", "deprecation" })
+	public void Call() throws IOException, UiObjectNotFoundException, RemoteException
+	{
+		String Callnum = "15810239293";
+		Process startCall= Runtime.getRuntime().exec("am start -a android.intent.action.CALL -d tel:"+Callnum);
+		sleep((long) 22000.0);
+		UiDevice.getInstance().sleep();
+		sleep((long) 1740000.0);
+		UiDevice.getInstance().wakeUp();
+		sleep((long) 14000.0);
+	    UiObject endButton = new UiObject(new UiSelector().
+	    		   className("android.widget.Button").index(1));
+	    if(endButton.exists() && endButton.isEnabled()) 
+	    {
+	    	endButton.click();
+	    }
+	    sleep((long) 5000.0);
+	    Util util = new Util();
+	    util.testUnlockMi3();	
+	    sleep((long) 10000.0);
+	}
+	 
+	
+	@SuppressWarnings({ "deprecation", "unused" })
+	public void Brower() throws IOException, UiObjectNotFoundException
+	{
+		Process openSetting = Runtime.getRuntime().exec("am start com.android.settings/.MiuiSettings");
+		sleep((long) 5000.0);
+		UiObject allsteView = new UiObject(new UiSelector().text("全部设置"));
+		allsteView.clickAndWaitForNewWindow();
+		sleep((long) 5000.0);
+		UiObject wifiView = new UiObject(new UiSelector().text("WLAN"));
+		wifiView.clickAndWaitForNewWindow();				
+		sleep((long) 5000.0);
+		UiObject endButton = new UiObject(new UiSelector().
+		 		   className("android.widget.CheckBox").index(0));
+
+		 if(endButton.exists() && endButton.isEnabled()) 
+		 {
+		 	endButton.click();
+		 }	
+		sleep((long) 5000.0);
+		Process closeSetting = Runtime.getRuntime().exec("am force-stop com.android.settings");
+		sleep((long) 10000.0);
+		for(int i = 0; i < 29;i++)
+		{
+			Process Brower1 = Runtime.getRuntime().exec("am start -a android.intent.action.VIEW -d " +
+		    		"http://3g.sina.com.cn -n com.android.browser/.BrowserActivity -f 0x13800000");
+		    sleep((long) 15000.0);
+		    UiDevice.getInstance().click(360,800);
+		    sleep((long) 15000.0);
+		    Process Brower2 = Runtime.getRuntime().exec("am start -a android.intent.action.VIEW -d " +
+		    		"http://3g.qq.com -n com.android.browser/.BrowserActivity -f 0x13800000");
+		    sleep((long) 15000.0);
+		    UiDevice.getInstance().click(323,956);
+		    sleep((long) 15000.0);
+		}
+		Process closeBrower = Runtime.getRuntime().exec("am force-stop com.android.browser ");
+		sleep((long) 5000.0);
+		a[6] = getPower();
+		Process openSetting1 = Runtime.getRuntime().exec("am start com.android.settings/.MiuiSettings");
+		sleep((long) 5000.0);
+		UiObject allsteView1 = new UiObject(new UiSelector().text("全部设置"));
+		allsteView1.clickAndWaitForNewWindow();
+		sleep((long) 5000.0);
+		UiObject wifiView1 = new UiObject(new UiSelector().text("WLAN"));
+		wifiView1.clickAndWaitForNewWindow();				
+		sleep((long) 5000.0);
+		UiObject endButton1 = new UiObject(new UiSelector().
+		 		   className("android.widget.CheckBox").index(0));
+
+		if(endButton1.exists() && endButton1.isEnabled()) 
+		{
+			endButton1.click();
+		}
+		sleep((long) 5000.0);
+		Process closeSetting1 = Runtime.getRuntime().exec("am force-stop com.android.settings");
+		sleep((long) 10000.0);
+	}
+	
+	@SuppressWarnings({ "deprecation", "unused" })
+	public void Camera() throws IOException, UiObjectNotFoundException
+	{	
+		Process openWeixin= Runtime.getRuntime().exec("am start com.android.camera/.Camera");
+		sleep((long) 10000.0);
+		for(int i = 1;i < 59; i++)
+		{
+			UiObject button2View = new UiObject(new UiSelector().description("“快门”按钮"));
+			button2View.clickAndWaitForNewWindow();
+			sleep((long) 30000.0);
+		}
+		sleep((long) 5000.0);
+		Process closeWeibo = Runtime.getRuntime().exec("am force-stop com.android.camera");
+		sleep((long) 5000.0);
+		Process getPower_end = Runtime.getRuntime().exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+		sleep((long) 5000.0);
+		a[7] = getPower();
+		a[8] = "0";
+		
+	}
+	
+	@SuppressWarnings({ "deprecation", "unused" })
+	public void  ContinueBrower() throws IOException, UiObjectNotFoundException, ParserConfigurationException, SAXException 
+	{
+		CrashBug();
+		Process getPower_end = Runtime.getRuntime().exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+		DataInputStream inputLogcat2 = new DataInputStream(getPower_end.getInputStream());
+		logcat = inputLogcat2.readLine();
+		int power = Integer.parseInt(logcat, 10);
+		File logcatFile1=new File("/sdcard/PowerTime.txt");
+		logcatFile1.createNewFile();
+		FileOutputStream outputLogcat1=new FileOutputStream(logcatFile1);
+		String Start = "Start Case ";
+		SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+		outputLogcat1.write((Start+date1.format(new Date())+"\n").getBytes());
+		while(power > 0){
+			int randValue = (int)Math.floor(Math.random()*(Util.Url.length));
+			String RandomURL =  Util.Url[randValue];
+			Process Brower1 = Runtime.getRuntime().exec("am start -a android.intent.action.VIEW -d " +RandomURL+" -f 0x00008000" );
+			sleep((long) 10000.0);
+			UiDevice.getInstance().swipe(150, 1600, 150, 350, 4);
+			sleep((long) 20000.0); 
+			/*sleep((long) Util.ReadXmlInt("ContinueBrower","looptime"));*/
+			Process getPower_end1 = Runtime.getRuntime().
+					exec("cat /sys/class/power_supply/max170xx_battery/capacity");
+			DataInputStream inputLogcat3 = new DataInputStream(getPower_end1.getInputStream());
+			logcat = inputLogcat3.readLine();
+			power = Integer.parseInt(logcat, 10);
+			String End = "Power "+ power + "----";
+			outputLogcat1.write((End+date1.format(new Date())+"\n").getBytes());
+		}
+		
+	}
+	
+	public void CrashBug()
+	{
+		UiWatcher confirmDialogWatcher = new UiWatcher(){
+			@Override
+			public boolean checkForCondition() {
+				UiObject okCancelDialog = new UiObject(new UiSelector().text("确定"));
+				if(okCancelDialog.exists()){
+					try {	
+						Process p1 = Runtime.getRuntime().exec("mkdir /sdcard/Satibiility ");
+						SimpleDateFormat date1 = new SimpleDateFormat("HHmm");
+						Process p2 = Runtime.getRuntime().exec("screencap -p /sdcard/Satibiility/" + date1.format(new Date()) + ".png");
+						sleep((long) 1000.0);
+						okCancelDialog.click();
+						sleep((long) 1000.0);
+						/*GetLog getLog = new GetLog();
+						getLog.getBugreportLog();*/
+					} catch (UiObjectNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				return false;
+			}
+			
+		};
+		
+		UiDevice.getInstance().registerWatcher("UIWATCHER", confirmDialogWatcher);
+		UiDevice.getInstance().runWatchers();
+	}
+
+	
+	public void toGreat() throws Exception{
+		DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder=factory.newDocumentBuilder();
+		document=builder.newDocument();
+	}
+	
+	public void toSave() throws Exception{
+		TransformerFactory tf=TransformerFactory.newInstance();
+		Transformer transformer=tf.newTransformer();
+		DOMSource source=new DOMSource(document);
+		transformer.setOutputProperty(OutputKeys.ENCODING,"UTF-8");
+		transformer.setOutputProperty(OutputKeys.INDENT,"yes");
+		PrintWriter pw=new PrintWriter(new FileOutputStream(filename));
+		StreamResult result=new StreamResult(pw);
+		transformer.transform(source,result);
+	}
+	public void toWrite(String ... strings) throws Exception{
+		if (root == null){
+			//Great xml 
+			toGreat();
+			//to write xml
+			root=document.createElement("bsptest");
+			document.appendChild(root);
+			title=document.createElement("package");
+			title.appendChild(document.createTextNode(""));
+			title.setAttribute("name", getClazzName);
+			root.appendChild(title);
+			Element title1=document.createElement("method");
+			title1.appendChild(document.createTextNode(""));
+			title.appendChild(title1);
+			title1.setAttribute("name", getMethodName);
+			Element content1=document.createElement("result");
+			content1.appendChild(document.createTextNode(strings[0]));
+			title1.appendChild(content1);
+			Element content2=document.createElement("screencap");
+			content2.appendChild(document.createTextNode(strings[1]));
+			title1.appendChild(content2);
+			Element content3=document.createElement("exception");
+			content3.appendChild(document.createTextNode(strings[2]));
+			title1.appendChild(content3);
+			for(int i = 3 ;i <strings.length; i++){
+				Element content4=document.createElement("data");
+				content4.appendChild(document.createTextNode(strings[i]));
+				title1.appendChild(content4);
+				/*addAttribute = new String[strings.length-3];*/
+				content4.setAttribute("name", "");
+			}
+			//to save xml
+			toSave();
+		}else{
+			//Great xml 
+			Element title1=document.createElement("method");
+			title1.appendChild(document.createTextNode(""));
+			title.appendChild(title1);
+			title1.setAttribute("name", getMethodName);
+			Element content1=document.createElement("result");
+			content1.appendChild(document.createTextNode(strings[0]));
+			title1.appendChild(content1);
+			Element content2=document.createElement("screencap");
+			content2.appendChild(document.createTextNode(strings[1]));
+			title1.appendChild(content2);
+			Element content3=document.createElement("exception");
+			content3.appendChild(document.createTextNode(strings[2]));
+			title1.appendChild(content3);
+			for(int i = 3 ;i <strings.length; i++){
+				Element content4=document.createElement("data");
+				content4.appendChild(document.createTextNode(strings[i]));
+				title1.appendChild(content4);
+				/*addAttribute = new String[strings.length-3];*/
+				content4.setAttribute("name", "");
+			}
+			
+			toSave();
+		}
+		}
+}

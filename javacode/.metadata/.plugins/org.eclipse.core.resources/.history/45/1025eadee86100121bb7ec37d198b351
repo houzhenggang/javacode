@@ -1,0 +1,46 @@
+package irdc.EX07_01;
+
+import android.app.Activity; 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle; 
+import android.view.ContextMenu; 
+import android.view.Menu; 
+import android.view.MenuItem; 
+import android.view.View; 
+import android.view.ContextMenu.ContextMenuInfo; 
+import android.widget.ImageView;
+import android.widget.ListView; 
+import android.widget.TextView; 
+
+public class EX07_01 extends Activity 
+{ 
+  /*宣告一個 TextVie變數與一個ImageView變數*/
+  private TextView mTextView01; 
+  private ImageView mImageView01;
+  /*宣告Context Menu的選項常數*/
+  protected static final int CONTEXT_ITEM1 = Menu.FIRST;  
+  protected static final int CONTEXT_ITEM2 = Menu.FIRST+1;
+  protected static final int CONTEXT_ITEM3 = Menu.FIRST+2;
+   
+  /** Called when the activity is first created. */ 
+  @Override 
+  public void onCreate(Bundle savedInstanceState) 
+  { 
+    super.onCreate(savedInstanceState); 
+    setContentView(R.layout.main); 
+     
+    /*透過findViewById建構子建立TextView與ImageView物件*/
+    /*mTextView01 = (TextView)findViewById(R.id.myTextView1); */
+    mImageView01= (ImageView)findViewById(R.id.myImageView1);
+    /*將Drawable中的圖片baby.png放入自訂的ImageView中*/
+    mImageView01.setImageDrawable(getResources().
+                 getDrawable(R.drawable.baby));
+    
+    /*設定OnCreateContextMenuListener給TextView
+     * 讓圖片上可以使用ContextMenu*/
+   
+  } 
+
+
+} 

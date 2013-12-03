@@ -1,0 +1,22 @@
+package mars.activity_calculator;
+
+import mars.activity_calculator.MainActivity.CalculateListener;
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class ResultActivity {
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.result);
+        
+        
+        
+        
+        
+        
+    }
+
+}

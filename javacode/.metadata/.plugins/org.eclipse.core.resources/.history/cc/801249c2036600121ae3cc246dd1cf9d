@@ -1,0 +1,15 @@
+package xjh;
+
+import java.io.IOException;
+
+public class haha1
+{
+	@SuppressWarnings("unused")
+	public static void main(String[] args) throws IOException
+	{
+		Process p2 = Runtime.getRuntime().exec("cmd.exe /k start adb shell logcat");
+		Process p3 = Runtime.getRuntime().exec("cmd.exe /k start adb shell logcat > E:\testjava\000.txt");
+		
+	}
+
+}

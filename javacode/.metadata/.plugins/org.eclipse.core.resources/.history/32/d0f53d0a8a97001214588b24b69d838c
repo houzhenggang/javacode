@@ -1,0 +1,59 @@
+package bsptest;
+
+import com.android.uiautomator.core.UiDevice;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiWatcher;
+
+import android.widget.TextView;
+import com.android.uiautomator.core.UiObject;
+
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+
+public class watcherStudy extends UiAutomatorTestCase
+{
+	public void testUiwatcher() throws UiObjectNotFoundException{
+		
+		
+		UiWatcher okCancelDialogWatcher = new  UiWatcher(){
+
+			@SuppressWarnings("unused")
+			@Override
+			public boolean checkForCondition() {
+
+				UiObject okCancelDialog = new UiObject(new UiSelector().textStartsWith("Lorem ipsum"));
+				if(okCancelDialog.exists()){
+					UiObject SendButton = new UiObject(new UiSelector().
+				    		   className("android.widget.Button").index(0).instance(1));
+					try{
+						SendButton.click();
+						System.out.println("1");
+					}catch(UiObjectNotFoundException e){
+						e.printStackTrace();
+					}
+					return (okCancelDialog.waitUntilGone(5*1000));
+				}
+				
+				return false;
+			}
+			
+		};
+		String xjh = "xuejinghao";
+		getUiDevice().registerWatcher(xjh, okCancelDialogWatcher);
+  
+        	System.out.println("2");
+        	getUiDevice().runWatchers();
+        	UiObject SendButton1 = new UiObject(new UiSelector().
+ 	    		   className("android.widget.Button").index(0).instance(4));
+
+ 			SendButton1.click();
+        
+     }
+
+		}
+
+
+
+

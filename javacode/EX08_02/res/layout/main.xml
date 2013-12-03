@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AbsoluteLayout 
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:background="@drawable/white"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  >
+  <!-- 建立一個TextView -->
+  <TextView 
+  android:id="@+id/myTextView1"  
+  android:layout_width="fill_parent" 
+  android:layout_height="wrap_content" 
+  android:text="@string/hello"
+  />
+
+  <!-- 建立一個ImageButton -->
+ <Button
+	android:id="@+id/myButton"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	/>
+
+  <!-- 建立一個WebView -->
+  <WebView 
+  android:id="@+id/myWebView1" 
+  android:layout_height="460px" 
+  android:layout_width="310px" 
+  android:layout_x="2px"
+  android:layout_y="50px"
+  android:background="@drawable/black" 
+  android:focusable="false"
+  /> 
+</AbsoluteLayout>

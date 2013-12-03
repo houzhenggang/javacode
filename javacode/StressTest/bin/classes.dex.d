@@ -1,0 +1,22 @@
+G:\javadai\StressTest\bin\classes.dex : \
+G:\javadai\StressTest\bin\classes\bsptest\AirCallBrowser$1.class \
+G:\javadai\StressTest\bin\classes\bsptest\AirCallBrowser$2.class \
+G:\javadai\StressTest\bin\classes\bsptest\AirCallBrowser.class \
+G:\javadai\StressTest\bin\classes\bsptest\Airplane$1.class \
+G:\javadai\StressTest\bin\classes\bsptest\Airplane.class \
+G:\javadai\StressTest\bin\classes\bsptest\Alarm.class \
+G:\javadai\StressTest\bin\classes\bsptest\Browser.class \
+G:\javadai\StressTest\bin\classes\bsptest\BTtest.class \
+G:\javadai\StressTest\bin\classes\bsptest\CallBrowser.class \
+G:\javadai\StressTest\bin\classes\bsptest\CallMo.class \
+G:\javadai\StressTest\bin\classes\bsptest\CallMT.class \
+G:\javadai\StressTest\bin\classes\bsptest\CallSmsBrowser.class \
+G:\javadai\StressTest\bin\classes\bsptest\CalltestMT.class \
+G:\javadai\StressTest\bin\classes\bsptest\ChangeNetwork.class \
+G:\javadai\StressTest\bin\classes\bsptest\EmailTest.class \
+G:\javadai\StressTest\bin\classes\bsptest\Power.class \
+G:\javadai\StressTest\bin\classes\bsptest\Reboot.class \
+G:\javadai\StressTest\bin\classes\bsptest\SmsMo.class \
+G:\javadai\StressTest\bin\classes\bsptest\SuspendCall.class \
+G:\javadai\StressTest\bin\classes\bsptest\WakeUp.class \
+G:\javadai\StressTest\bin\classes\bsptest\Wifi.class \

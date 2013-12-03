@@ -1,0 +1,28 @@
+package mian.activity01;
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.view.Menu;
+import android.widget.Button;
+import android.widget.TextView;
+
+public class MainActivity extends Activity {
+	private Button myButton = null;
+	
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        TextView myTextView = (TextView)findViewById(R.id.myTextView);
+        myTextView.setText("xuejinghao");
+        myButton.setText(" ‰»Î");
+        
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+}

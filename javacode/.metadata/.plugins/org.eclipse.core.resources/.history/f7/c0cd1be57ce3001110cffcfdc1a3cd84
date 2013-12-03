@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">Activity_calculator</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="symbol">乘以</string>
+    <string name="calculate">计算</string>
+
+</resources>

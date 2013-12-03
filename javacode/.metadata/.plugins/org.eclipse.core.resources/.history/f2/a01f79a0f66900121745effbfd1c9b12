@@ -1,0 +1,15 @@
+package irdc.ex08_02;
+
+import java.io.IOException;
+
+public class Browser
+{
+  public static void main(String[] args) throws IOException
+  {
+    Process pc1 = Runtime.getRuntime().exec("am start -a android.intent.action.VIEW -d " +
+    		"http://3g.sina.com.cn " +
+    		"-n com.android.browser/.BrowserActivity -f 0x13800000");
+    
+  }
+
+}

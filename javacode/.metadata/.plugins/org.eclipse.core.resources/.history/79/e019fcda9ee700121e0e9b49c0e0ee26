@@ -1,0 +1,60 @@
+package Bsptest;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import android.os.RemoteException; 
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class SmsMo extends UiAutomatorTestCase {  
+	
+	@SuppressWarnings({  "unused", "deprecation" })
+	public void test2SMSMO() throws ParserConfigurationException, SAXException, IOException, UiObjectNotFoundException {
+		for(int i = 0 ; i < 500 ; i++){
+			Process p0 = Runtime.getRuntime().exec("logcat -b radio -c");
+			String smsNumber = "10010";
+			String details = "cxyl";
+			Process runSmsMo = Runtime.getRuntime().exec("am start -a android.intent.action.SENDTO -d sms:" + smsNumber + " --es sms_body " + details);
+			sleep((long) 5000.0);
+			UiObject sendButton = new UiObject(new UiSelector()
+	         .description("发送"));	
+			if(sendButton.exists() && sendButton.isEnabled()) 
+		    {
+				sendButton.click();
+		    }
+		    sleep((long) 10000);
+	    	int result1 = -1;
+	    	String logcat;
+	    	File logcatFile=new File("/sdcard/"+i+".txt");
+			logcatFile.createNewFile();
+	    	FileOutputStream outputLogcat=new FileOutputStream(logcatFile);
+	    	while(result1 == -1)
+	    	{
+	    		Process getLogcat1 = Runtime.getRuntime().exec("logcat -b radio -t 2000");
+	    		DataInputStream inputLogcat1 = new DataInputStream(getLogcat1.getInputStream());
+				while ((logcat = inputLogcat1.readLine()) != null){
+					outputLogcat.write(logcat.getBytes());				
+				}
+				BufferedReader bufferedReader1 = new BufferedReader(new FileReader(logcatFile));  
+				String lineTXT1 ;
+				lineTXT1 = bufferedReader1.readLine();
+				String log1 = lineTXT1.toString().trim();
+				result1=log1.indexOf("errorCode");
+				sleep((long) 5000.0);
+				continue;
+	    	}
+	    	System.out.println("OK"+i);
+		}
+			
+		}
+	public static void main(String args[])
+	{ 
+		junit.textui.TestRunner.run(SmsMo.class);
+	}
+   
+	
+}

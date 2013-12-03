@@ -1,0 +1,17 @@
+package com.android.uiautomator;
+//Import the uiautomator libraries
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class LaunchSettings extends UiAutomatorTestCase {   
+
+public void testDemo() throws UiObjectNotFoundException {   
+   
+   // Simulate a short press on the HOME button.
+   getUiDevice().pressHome();
+   
+}   
+}

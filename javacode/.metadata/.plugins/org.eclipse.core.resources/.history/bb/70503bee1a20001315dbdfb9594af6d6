@@ -1,0 +1,111 @@
+package bsptest.powertest;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import android.os.RemoteException;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class PowerTest extends UiAutomatorTestCase
+{
+	IPowerTest IPUT;
+	/*//确定Interface的具体实现方式的函数
+	public static IPowerTest getInterface1(int flag) throws ParserConfigurationException, SAXException, IOException
+	{
+		IPowerTest Interface = null;
+		if(flag == 1)
+		{
+			Interface = new MI3();
+		}
+		else if(flag == 2)
+		{
+			Interface = new MI2();
+		}
+		return Interface;
+		
+	}*/
+	
+	@SuppressWarnings("unused")
+	protected void setUp() throws UiObjectNotFoundException, RemoteException, IOException 
+	{
+		String product = this.getPhoneType();
+        System.out.println(product);
+        
+        if (product.equals("pisces"))
+            IPUT = new MI3();
+        else if (product.equals("aries"))
+            IPUT = new MI2();
+		getUiDevice().pressHome();
+		sleep((long) 1000.0);
+		Process SendEvent1 = Runtime.getRuntime().exec(" am Kill all background processes.");
+		sleep((long) 1000.0);    
+	}
+	
+
+	@SuppressWarnings("unused")
+	protected void tearDown() throws UiObjectNotFoundException, RemoteException, IOException 
+	{
+		getUiDevice().pressHome();
+		sleep((long) 1000.0);
+		Process SendEvent1 = Runtime.getRuntime().exec(" am Kill all background processes.");
+		sleep((long) 1000.0);  
+	}
+		
+	/*public void test01PowerTest() throws Throwable 
+	{
+		IPUT.PlayGame();	
+	}
+	public void test02PowerTest() throws Throwable 
+	{
+		IPUT.Music();
+	}
+	*/
+	public void test03PowerTest() throws Throwable 
+	{
+		IPUT.Video();
+	}
+	
+	public void test04PowerTest() throws Throwable 
+	{
+		IPUT.ReadBook();
+	}
+	
+	/*public void test05PowerTest() throws Throwable 
+	{
+		IPUT.Weibo();
+	}
+	
+	public void test06PowerTest() throws Throwable 
+	{
+		IPUT.Brower();
+	}
+	
+	public void test07PowerTest() throws Throwable 
+	{
+		IPUT.Camera();
+	}*/
+	
+	public String getPhoneType() throws IOException
+    {
+      Process p = Runtime.getRuntime().exec("getprop ro.product.name");
+      InputStream is = p.getInputStream();
+      BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+      String line;
+      line = reader.readLine();
+      is.close();
+      reader.close();
+      p.destroy();
+      return line;
+    }
+
+}

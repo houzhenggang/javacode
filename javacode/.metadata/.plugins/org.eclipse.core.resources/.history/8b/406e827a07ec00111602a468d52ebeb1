@@ -1,0 +1,109 @@
+package mars.location05;
+
+import java.util.Iterator;
+
+import java.util.List;
+import java.util.Locale;
+
+
+import android.app.Activity;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
+public class MainActivity extends Activity {
+	/** Called when the activity is first created. */
+	private Button geocodingButton;
+	private Button reverseGeocodingButton;
+	private Button myButton = null;
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.main);
+		super.onCreate(savedInstanceState);
+   
+        setContentView(R.layout.main);
+
+        myButton = (Button)findViewById(R.id.myButton);
+
+        myButton.setOnClickListener(new MyButtonListener());
+		geocodingButton = (Button) findViewById(R.id.geocodingButtonId);
+		geocodingButton.setOnClickListener(new GeocodingButtonListener());
+		
+		reverseGeocodingButton = (Button)findViewById(R.id.reverseGeocodingButtonId);
+		reverseGeocodingButton.setOnClickListener(new ReverseGeocodingButtonListener());
+	}
+	class MyButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			
+			
+			Uri uri = Uri.parse("geo:"+ view.address.toString());  
+;
+			Intent it = new Intent(Intent.ACTION_VIEW,uri);
+			startActivity(it); 
+		}
+    	
+    }
+
+	private class ReverseGeocodingButtonListener implements OnClickListener {
+
+		@Override
+		public void onClick(View arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+
+	private class GeocodingButtonListener implements OnClickListener{
+
+		@Override
+		public void onClick(View v) {
+			new GeocodingTask().execute(null);
+		}
+		
+	}
+	private class ReverseGeocodeTask extends AsyncTask<Integer, Integer, Integer> {
+
+		@Override
+		protected Integer doInBackground(Integer... params) {
+			try {
+				Geocoder geocoder = new Geocoder(MainActivity.this, Locale.US);
+				List<Address> addresses = geocoder.getFromLocation(40.714224,
+						-73.961452, 1);
+				for (Iterator iterator = addresses.iterator(); iterator.hasNext();) {
+					Address address = (Address) iterator.next();
+					System.out.println(address);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+	}
+	
+	private class GeocodingTask extends AsyncTask<Integer, Integer, Integer>{
+
+		@Override
+		protected Integer doInBackground(Integer... params) {
+			try{
+				Geocoder geocoder = new Geocoder(MainActivity.this);
+				List<Address> addresses = geocoder.getFromLocationName("SFO", 1);
+				System.out.println(addresses.size());
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+	}
+}

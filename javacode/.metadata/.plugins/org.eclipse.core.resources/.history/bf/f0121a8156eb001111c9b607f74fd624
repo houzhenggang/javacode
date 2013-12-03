@@ -1,0 +1,37 @@
+package mars.gps_activity;
+
+import android.location.LocationManager;
+import android.os.Bundle;
+
+import android.app.Activity;
+import android.content.Context;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
+public class MainActivity extends Activity {
+	private Button button = null;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        button = (Button)findViewById(R.id.locationButtonId);
+        button.setOnClickListener(new ButtonListener());
+        
+    }
+    
+    private class ButtonListener implements OnClickListener{
+    	public void onClick(View v) {
+    		LocationManager locationManager = (LocationManager)MainActivity.this.getSystemService(Context.LOCATION_SERVICE);
+    		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new TestLocationListener());
+    	}
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+}

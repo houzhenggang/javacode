@@ -1,0 +1,26 @@
+package irdc.ex08_02;
+import android.app.Activity;
+import android.os.Bundle;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import android.widget.Toast;
+
+public class Browser extends Activity
+{
+  private WebView mWebView1;
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.other);
+    mWebView1 = (WebView)findViewById(R.id.myWebView1);
+    mWebView1.setWebViewClient(new WebViewClient(){});
+    String strURI ="http://3g.sina.com.cn"; 
+    mWebView1.loadUrl(strURI);
+    Toast.makeText(
+        Browser.this,getString(R.string.load)+strURI,Toast.LENGTH_LONG).show();
+  }
+
+  
+
+}

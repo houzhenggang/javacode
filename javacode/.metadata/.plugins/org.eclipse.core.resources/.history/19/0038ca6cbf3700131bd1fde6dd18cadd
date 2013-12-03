@@ -1,0 +1,87 @@
+package bsptest.powertest;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import android.os.RemoteException;
+
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+public class PowerTest extends UiAutomatorTestCase
+{
+	//确定Interface的具体实现方式的函数
+	public static IPowerTest getInterface1(int flag) throws ParserConfigurationException, SAXException, IOException
+	{
+		IPowerTest Interface = null;
+		if(flag == 1)
+		{
+			Interface = new MI3();
+		}
+		else if(flag == 2)
+		{
+			Interface = new MI2();
+		}
+		return Interface;
+		
+	}
+	
+	private int ReadXmlInt(String name) throws ParserConfigurationException, SAXException, IOException
+	{
+		DocumentBuilderFactory factory1 = DocumentBuilderFactory
+			     .newInstance();
+		DocumentBuilder builder1 = factory1.newDocumentBuilder();
+		Document document1 = builder1.parse(new File("/sdcard/string.xml"));
+		Element rootElement1 = document1.getDocumentElement();
+		NodeList list_loop = rootElement1.getElementsByTagName(name);
+		Element element_loop = (Element) list_loop.item(0);
+		String newname= element_loop.getChildNodes().item(0).getNodeValue();
+		int loop = Integer.parseInt(newname, 10);
+		
+		return loop;
+	}
+	
+	@SuppressWarnings("unused")
+	protected void setUp() throws UiObjectNotFoundException, RemoteException, IOException 
+	{
+		getUiDevice().pressHome();
+		sleep((long) 1000.0);
+		Process SendEvent1 = Runtime.getRuntime().exec(" am Kill all background processes.");
+		sleep((long) 1000.0);    
+	}
+	
+
+	@SuppressWarnings("unused")
+	protected void tearDown() throws UiObjectNotFoundException, RemoteException, IOException 
+	{
+		getUiDevice().pressHome();
+		sleep((long) 1000.0);
+		Process SendEvent1 = Runtime.getRuntime().exec(" am Kill all background processes.");
+		sleep((long) 1000.0);  
+	}
+		
+	public void testPowerTest() throws Throwable 
+	{
+
+		IPowerTest Interface = getInterface1(ReadXmlInt("flag"));
+		Interface.PlayGame();
+		Interface.Music();
+		Interface.Video();
+		Interface.ReadBook();
+		Interface.Weibo();
+		Interface.Call();
+		Interface.Brower();
+		Interface.Camera();
+	
+	}
+
+}

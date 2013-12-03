@@ -1,0 +1,97 @@
+package com.bsp.xue;
+
+import java.io.*;
+import java.util.*;
+import junit.framework.*;
+
+import java.io.File.*;
+import android.R.string;
+import android.os.RemoteException;
+import com.android.uiautomator.core.UiObject;
+import com.android.uiautomator.core.UiObjectNotFoundException;
+import com.android.uiautomator.core.UiScrollable;
+import com.android.uiautomator.core.UiSelector;
+import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+
+
+public class test extends UiAutomatorTestCase implements Test {   
+	
+public void test1() throws UiObjectNotFoundException, RemoteException, IOException{
+	for(int i = 0 ; i < 1 ; i++){
+		getUiDevice().pressHome();
+	    sleep((long) 2000.0);
+	    getUiDevice().sleep();
+	    sleep((long) 2000.0);
+	    getUiDevice().wakeUp();
+	    getUiDevice().swipe(380, 935, 380, 1235, 3);
+	    sleep((long) 2000.0);
+	    UiObject AppsView = new UiObject(new UiSelector()
+        .text("图库"));
+	    AppsView.clickAndWaitForNewWindow();
+	    sleep((long) 2000.0);
+	    getUiDevice().pressHome();
+	    sleep((long) 2000.0);
+	    main1();
+	    sleep((long) 2000.0);
+	    UiObject NewView = new UiObject(new UiSelector()
+	     .description("“快门”按钮"));
+	    NewView.clickAndWaitForNewWindow();
+	    sleep((long) 2000.0);
+	    UiObject New1View = new UiObject(new UiSelector()
+	     .description("最新照片"));
+	    New1View.clickAndWaitForNewWindow();
+	
+	    UiObject settingsValidation = new UiObject(new UiSelector()
+	        .packageName("com.android.camera"));
+	    assertTrue("Unable to detect Settings", settingsValidation.exists());
+	    System.out.println("case run is successfully " + i );
+		}
+
+    }
+public void test2() throws UiObjectNotFoundException, RemoteException, IOException{
+		getUiDevice().pressHome();
+	    sleep((long) 2000.0);
+	    getUiDevice().sleep();
+	    sleep((long) 2000.0);
+	    getUiDevice().wakeUp();
+	    getUiDevice().swipe(380, 935, 380, 1235, 3);
+	    sleep((long) 2000.0);
+	    UiObject AppsView = new UiObject(new UiSelector()
+        .text("图库"));
+	    AppsView.clickAndWaitForNewWindow();
+	}
+
+	
+public static void main(String args[]){ 
+
+        junit.textui.TestRunner.run(test .class); 
+        }
+
+
+
+
+public static void main1() throws IOException{
+          
+	Runtime rt = Runtime.getRuntime();
+	Process proc = rt.exec("am start -a android.intent.action.MAIN -n com.android.camera/.Camera");
+/*	InputStream stderr = proc.getErrorStream();
+	            InputStreamReader isr = new InputStreamReader(stderr);
+	            BufferedReader br = new BufferedReader(isr);
+	            String line = null;
+	            System.out.println("<ERROR>");
+	            while ( (line = br.readLine()) != null)
+	                System.out.println(line);
+	            System.out.println("</ERROR>");
+	            int exitVal = proc.waitFor();
+	            System.out.println("Process exitValue: " + exitVal);
+	        } catch (Throwable t)
+	{
+	t.printStackTrace();
+	}
+	    };*/
+}
+}
+
+
+
+

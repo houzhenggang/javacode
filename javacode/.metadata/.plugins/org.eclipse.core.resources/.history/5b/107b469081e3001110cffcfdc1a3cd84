@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/hello_world"
+        tools:context=".MainActivity" />
+    <EidtText
+        android:id="@+id/factorOne"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    <EidtText
+        android:id="@+id/factorTwo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    <Buttom
+        android:id="@+id/calculate"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+        
+        
+
+</LinearLayout>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="settings.xslt"?>
+<bsptest>
+<package name="adsfaf.dfafasfd.XmlGreat">
+<method name="getMethod">
+<result>ok</result>
+<screencap>%~dp0\aa.png</screencap>
+<exception>%~dp0\AA.txt</exception>
+<data name="passrate">ok</data>
+<data name="passrate">ok</data>
+<data name="passrate">ok</data>
+<data name="passrate">ok</data>
+<data name="passrate">ok</data>
+</method>
+</package>
+</bsptest>
